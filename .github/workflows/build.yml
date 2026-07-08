@@ -26,6 +26,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0  # Fetch full history for GitVersion
+          fetch-tags: true  # Ensure tags are available
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
