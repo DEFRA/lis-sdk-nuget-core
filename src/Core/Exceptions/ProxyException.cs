@@ -1,10 +1,20 @@
-// <copyright file="RulesLibrary.cs" company="Defra">
+// <copyright file="ProxyException.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
+
 namespace Defra.Core.Exceptions;
 
+using System;
+
+/// <summary>
+/// Exception thrown when a proxy error occurs.
+/// </summary>
 public class ProxyException : Exception
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProxyException"/> class.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
     public ProxyException(string message)
         : base(message)
     {

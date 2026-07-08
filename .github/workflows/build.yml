@@ -1,0 +1,43 @@
+#
+# dotnet-build
+#
+# This workflow is used to build, test and publish a prerelease dotnet project.
+#
+# This will
+# - run the required "build" task
+# - run the required "test" task
+# - run the required "sonar" task
+#
+# if all of these tasks pass then
+# - The branch is tagged with a prerelease version number.
+# - Build a Docker container and publish to ACR
+#   or
+# - Build a Nuget package and publish it to nuget.org
+name: dotnet-build
+on:
+  push:
+    branches:
+      - feature/LREG-*
+      - hotfix/LREG-*
+
+jobs:
+  dotnet-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Perform build, test, and analyze
+        uses: cake-build/cake-action@v3
+        with:
+          script-path: ./build/build.cake
+          args: |
+            --product_name=Defra.Core
+            --solution_file_name=../../Core.slnx
+
+
