@@ -1,7 +1,7 @@
 #
 # dotnet-build
 #
-# This workflow is used to build, test and publish a prerelease dotnet project.
+# This workflow is used to build, test dotnet project.
 #
 # This will
 # - run the required "build" task
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0  # Fetch full history for GitVersion
+          fetch-depth: 0    # Fetch full history for GitVersion
           fetch-tags: true  # Ensure tags are available
 
       - name: Setup .NET
@@ -35,12 +35,21 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Calculate Version
+        id: calculate_version
+        uses: cake-build/cake-action@v3
+        with:
+          script-path: ./build/version.cake
+          target: GetVersion
+
       - name: Perform build, test, and analyze
         uses: cake-build/cake-action@v3
         with:
           script-path: ./build/build.cake
           args: |
+            --target=Default
             --product_name=Defra.Core
-            --solution_file_name=../../Core.slnx
+            --solution_file_name=Core.slnx
+            --package_version=${{ steps.calculate_version.outputs.version }}
 
 

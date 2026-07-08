@@ -73,3 +73,29 @@ public string CalculateVersion()
     }
     return calculatedVersion;
 }
+
+Task("GetVersion")
+    .Description("Calculates the version and sets it as a GitHub Actions output")
+    .Does(() => {
+        var version = CalculateVersion();
+        Information($"Calculated Version: {version}");
+        
+        if (BuildSystem.GitHubActions.IsRunningOnGitHubActions)
+        {
+            var outputFile = EnvironmentVariable("GITHUB_OUTPUT");
+            if (!string.IsNullOrEmpty(outputFile))
+            {
+                System.IO.File.AppendAllLines(outputFile, new[] { $"version={version}" });
+            }
+            else
+            {
+                Warning("GITHUB_OUTPUT environment variable not found.");
+            }
+        }
+    });
+
+var targetVersion = Argument("target", "");
+if (targetVersion == "GetVersion")
+{
+    RunTarget("GetVersion");
+}

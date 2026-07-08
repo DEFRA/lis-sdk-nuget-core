@@ -5,9 +5,10 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-const string TEST_COVERAGE_OUTPUT_DIR = ".coverage";
+const string TEST_COVERAGE_OUTPUT_DIR = "../.coverage";
+const string PACK_OUTPUT_DIR = "../.artifacts";
 var solution_file_name = Argument<string>("solution_file_name", "");
-var version = Argument<string>("version", "");
+var version = Argument<string>("package_version", "");
 var github_token = Argument<string>("github_token", "");
 Task("Clean")
     .Does(() => {
@@ -151,11 +152,43 @@ Task("Test")
               ReportGenerator(glob, outputDirectory, reportSettings);
 });
 
+Task("Pack")
+    .IsDependentOn("Test")
+    .Does(() => {
+    var settings = new DotNetPackSettings
+    {
+        Configuration = configuration,
+        OutputDirectory = PACK_OUTPUT_DIR,
+        MSBuildSettings = new DotNetMSBuildSettings()
+                        .WithProperty("PackageVersion", version)
+                        .WithProperty("Copyright", $"© Copyright {DateTime.Now.Year}")
+                        .WithProperty("Version", version)
+    };
+    
+    if (string.IsNullOrEmpty(solution_file_name))
+    {
+        var projects = GetFiles("./src/**/*.csproj");
+        if (!projects.Any())
+        {
+            projects = GetFiles("./**/*.csproj");
+        }
+        projects.ToList().ForEach(project => {
+            Information($"Packing {project.ToString()}");
+            DotNetPack(project.ToString(), settings);
+        });
+    }
+    else
+    {
+        DotNetPack(solution_file_name, settings);
+    }
+});
+
 Task("Default")
        .IsDependentOn("Clean")
        .IsDependentOn("Version")
        .IsDependentOn("Restore")
        .IsDependentOn("Build")
-       .IsDependentOn("Test");
+       .IsDependentOn("Test")
+       .IsDependentOn("Pack");
 
 RunTarget(target);
