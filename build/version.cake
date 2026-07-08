@@ -1,3 +1,4 @@
+#nullable enable
 #tool dotnet:?package=GitVersion.Tool&version=6.5.1
 
 public string CalculateVersion()

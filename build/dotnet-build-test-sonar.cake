@@ -1,3 +1,4 @@
+#nullable enable
 #addin nuget:?package=Cake.Sonar&version=5.0.0
 #tool dotnet:?package=dotnet-sonarscanner&version=11.2.1
 
