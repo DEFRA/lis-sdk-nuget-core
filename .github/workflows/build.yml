@@ -92,3 +92,11 @@ jobs:
           name: nuget-packages
           path: artifacts/*.nupkg
           if-no-files-found: error
+
+  sonar-analysis:
+    name: "Sonar Analysis"
+    needs: [calculate-version, build-pack]
+    uses: ./.github/workflows/sonar.yml
+    with:
+      version: ${{ needs.calculate-version.outputs.version }}
+    secrets: inherit
