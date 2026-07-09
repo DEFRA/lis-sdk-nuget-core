@@ -31,6 +31,11 @@ jobs:
           script-path: ./version.cake
           target: GetVersion
 
+      - name: Debug location
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -la
+
       - name: Store version
         run: |
           mkdir -p .artifacts
@@ -73,8 +78,11 @@ jobs:
 
       - name: Debug artifacts
         run: |
-          ls -R .artifacts || echo ".artifacts not found"
+          echo "Current directory: $(pwd)"
+          ls -la .artifacts || echo ".artifacts not found"
           find . -name "*.nupkg"
+          find . -name ".artifacts" -type d
+          env | grep GITHUB
 
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v4
