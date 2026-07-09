@@ -6,8 +6,8 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-const string TEST_COVERAGE_OUTPUT_DIR = ".coverage";
-const string PACK_OUTPUT_DIR = ".artifacts";
+var PACK_OUTPUT_DIR = Argument("output_dir", ".artifacts");
+var TEST_COVERAGE_OUTPUT_DIR = ".coverage";
 var solution_file_name = Argument<string>("solution_file_name", "");
 var version = Argument<string>("package_version", "");
 var github_token = Argument<string>("github_token", "");
@@ -160,7 +160,7 @@ Task("Pack")
     var settings = new DotNetPackSettings
     {
         Configuration = configuration,
-        OutputDirectory = MakeAbsolute(Directory(PACK_OUTPUT_DIR)),
+        OutputDirectory = Directory(PACK_OUTPUT_DIR),
         MSBuildSettings = new DotNetMSBuildSettings()
                         .WithProperty("PackageVersion", version)
                         .WithProperty("Copyright", $"© Copyright {DateTime.Now.Year}")
