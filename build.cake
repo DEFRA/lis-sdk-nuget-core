@@ -160,7 +160,7 @@ Task("Pack")
     var settings = new DotNetPackSettings
     {
         Configuration = configuration,
-        OutputDirectory = Directory(PACK_OUTPUT_DIR),
+        OutputDirectory = MakeAbsolute(Directory(PACK_OUTPUT_DIR)),
         MSBuildSettings = new DotNetMSBuildSettings()
                         .WithProperty("PackageVersion", version)
                         .WithProperty("Copyright", $"© Copyright {DateTime.Now.Year}")
