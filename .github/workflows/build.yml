@@ -30,7 +30,7 @@ jobs:
         id: calculate_version
         uses: cake-build/cake-action@v3
         with:
-          script-path: ./build/version.cake
+          script-path: ./version.cake
           target: GetVersion
 
       - name: Store version
@@ -41,7 +41,7 @@ jobs:
       - name: Build and package
         uses: cake-build/cake-action@v3
         with:
-          script-path: ./build/build.cake
+          script-path: ./build.cake
           args: |
             --target=Pack
             --product_name=Defra.Core

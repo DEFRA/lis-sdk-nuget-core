@@ -6,8 +6,8 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
-const string TEST_COVERAGE_OUTPUT_DIR = "../.coverage";
-const string PACK_OUTPUT_DIR = "../.artifacts";
+const string TEST_COVERAGE_OUTPUT_DIR = ".coverage";
+const string PACK_OUTPUT_DIR = ".artifacts";
 var solution_file_name = Argument<string>("solution_file_name", "");
 var version = Argument<string>("package_version", "");
 var github_token = Argument<string>("github_token", "");
@@ -32,10 +32,10 @@ Task("Clean")
         }
         else
         {
-            var projects = GetFiles("../**/*.csproj");
+            var projects = GetFiles("./**/*.csproj");
             if (!projects.Any())
             {
-                projects = GetFiles("../**/**/*.csproj");
+                projects = GetFiles("./**/**/*.csproj");
             }
             projects.ToList().ForEach(project => {
                 DotNetClean(project.ToString(), cleanSettings);
@@ -78,10 +78,10 @@ Task("Restore")
              "https://api.nuget.org/v3/index.json",
           }
         };
-   var projects = GetFiles("../**/*.csproj");
+   var projects = GetFiles("./**/*.csproj");
    if (!projects.Any())
    {
-       projects = GetFiles("../**/**/*.csproj");
+       projects = GetFiles("./**/**/*.csproj");
    }
    projects.ToList().ForEach(project => {
        Information($"Restoring {project.ToString()}");
@@ -97,10 +97,10 @@ Task("Build")
                         Configuration = configuration,
                         ArgumentCustomization = args => args.Append($"/p:Version={version}")
                        };
-     var projects = GetFiles("../**/*.csproj");
+     var projects = GetFiles("./**/*.csproj");
      if (!projects.Any())
      {
-         projects = GetFiles("../**/**/*.csproj");
+         projects = GetFiles("./**/**/*.csproj");
      }
      projects.ToList().ForEach(project => {
          Information($"Building {project.ToString()}");
@@ -120,7 +120,7 @@ Task("Test")
        var testProjects = GetFiles("./tests/**/*.csproj");
        if (!testProjects.Any())
        {
-           testProjects = GetFiles("../tests/**/*.csproj");
+           testProjects = GetFiles("./tests/**/*.csproj");
        }
 
        testProjects.ToList().ForEach(project => {
@@ -169,10 +169,10 @@ Task("Pack")
     
     if (string.IsNullOrEmpty(solution_file_name))
     {
-        var projects = GetFiles("../src/**/*.csproj");
+        var projects = GetFiles("./src/**/*.csproj");
         if (!projects.Any())
         {
-            projects = GetFiles("../src/*.csproj");
+            projects = GetFiles("./src/*.csproj");
         }
         projects.ToList().ForEach(project => {
             Information($"Packing {project.ToString()}");
