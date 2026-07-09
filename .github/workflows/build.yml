@@ -42,7 +42,7 @@ jobs:
           script-path: ./build/version.cake
           target: GetVersion
 
-      - name: Perform build, test, and analyze
+      - name: Perform build, test, and package
         uses: cake-build/cake-action@v3
         with:
           script-path: ./build/build.cake
@@ -51,5 +51,7 @@ jobs:
             --product_name=Defra.Core
             --solution_file_name=Core.slnx
             --package_version=${{ steps.calculate_version.outputs.version }}
-
-
+            
+    
+            
+            

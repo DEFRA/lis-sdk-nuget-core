@@ -32,13 +32,14 @@ Task("Clean")
         }
         else
         {
-            var projects = GetFiles("./**/*.csproj");
+            var projects = GetFiles("../**/*.csproj");
             if (!projects.Any())
             {
-                projects = GetFiles("./**/**/*.csproj");
+                projects = GetFiles("../**/**/*.csproj");
             }
             projects.ToList().ForEach(project => {
                 DotNetClean(project.ToString(), cleanSettings);
+                Information($"Cleaning project {project.ToString()}");
             });
         }
     }
@@ -77,10 +78,10 @@ Task("Restore")
              "https://api.nuget.org/v3/index.json",
           }
         };
-   var projects = GetFiles("./**/*.csproj");
+   var projects = GetFiles("../**/*.csproj");
    if (!projects.Any())
    {
-       projects = GetFiles("./**/**/*.csproj");
+       projects = GetFiles("../**/**/*.csproj");
    }
    projects.ToList().ForEach(project => {
        Information($"Restoring {project.ToString()}");
@@ -96,10 +97,10 @@ Task("Build")
                         Configuration = configuration,
                         ArgumentCustomization = args => args.Append($"/p:Version={version}")
                        };
-     var projects = GetFiles("./**/*.csproj");
+     var projects = GetFiles("../**/*.csproj");
      if (!projects.Any())
      {
-         projects = GetFiles("./**/**/*.csproj");
+         projects = GetFiles("../**/**/*.csproj");
      }
      projects.ToList().ForEach(project => {
          Information($"Building {project.ToString()}");
@@ -168,10 +169,10 @@ Task("Pack")
     
     if (string.IsNullOrEmpty(solution_file_name))
     {
-        var projects = GetFiles("./src/**/*.csproj");
+        var projects = GetFiles("../src/**/*.csproj");
         if (!projects.Any())
         {
-            projects = GetFiles("./**/*.csproj");
+            projects = GetFiles("../src/*.csproj");
         }
         projects.ToList().ForEach(project => {
             Information($"Packing {project.ToString()}");
