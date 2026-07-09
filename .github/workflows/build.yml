@@ -10,21 +10,17 @@ permissions:
   contents: read
 
 jobs:
-  dotnet-build:
-    name: "Build and Pack"
+  calculate-version:
+    name: "Calculate Version"
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.calculate_version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
 
       - name: Calculate Version
         id: calculate_version
@@ -39,7 +35,29 @@ jobs:
         run: |
           mkdir -p .artifacts
           echo "${{ steps.calculate_version.outputs.version }}" > .artifacts/version.txt
-          ls -R .artifacts
+
+      - name: Upload version artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-version
+          path: .artifacts/version.txt
+          if-no-files-found: error
+
+  build-pack:
+    name: "Build and Pack"
+    needs: calculate-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
       - name: Build and package
         uses: cake-build/cake-action@v3
@@ -51,20 +69,7 @@ jobs:
             --target=Pack
             --product_name=Defra.Core
             --solution_file_name=Core.slnx
-            --package_version=${{ steps.calculate_version.outputs.version }}
-
-      - name: Sonar Analysis
-        uses: cake-build/cake-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-        with:
-          script-path: ./sonar.cake
-          args: |
-            --target=Sonar
-            --product_name=Defra.Core
-            --solution_file_name=Core.slnx
-            --package_version=${{ steps.calculate_version.outputs.version }}
+            --package_version=${{ needs.calculate-version.outputs.version }}
 
       - name: Debug artifacts
         run: |
@@ -78,9 +83,31 @@ jobs:
           path: .artifacts/*.nupkg
           if-no-files-found: error
 
-      - name: Upload version artifact
-        uses: actions/upload-artifact@v4
+  sonar-analysis:
+    name: "Sonar Analysis"
+    needs: calculate-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          name: build-version
-          path: .artifacts/version.txt
-          if-no-files-found: error
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Sonar Analysis
+        uses: cake-build/cake-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+        with:
+          script-path: ./sonar.cake
+          args: |
+            --target=Sonar
+            --product_name=Defra.Core
+            --solution_file_name=Core.slnx
+            --package_version=${{ needs.calculate-version.outputs.version }}

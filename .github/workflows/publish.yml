@@ -13,14 +13,15 @@ permissions:
   actions: read
 
 jobs:
-  publish:
-    name: "Publish NuGet package"
+  download-artifacts:
+    name: "Download Artifacts"
     runs-on: ubuntu-latest
-
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push'
-
+    outputs:
+      run_id: ${{ steps.build_run.outputs.run_id }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Find successful Build workflow run
         id: build_run
@@ -54,14 +55,6 @@ jobs:
 
             core.setOutput("run_id", buildRun.id);
 
-      - name: Download NuGet package artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: nuget-packages
-          path: .artifacts
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ steps.build_run.outputs.run_id }}
-
       - name: Download version artifact
         uses: actions/download-artifact@v4
         with:
@@ -75,7 +68,20 @@ jobs:
         run: |
           VERSION="$(cat .artifacts/version.txt)"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Publishing version: $VERSION"
+          echo "Using version: $VERSION"
+
+  publish-nuget:
+    name: "Publish NuGet"
+    needs: download-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download NuGet package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages
+          path: .artifacts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ needs.download-artifacts.outputs.run_id }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
