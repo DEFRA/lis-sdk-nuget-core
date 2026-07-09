@@ -13,7 +13,7 @@
 # - Build a Docker container and publish to ACR
 #   or
 # - Build a Nuget package and publish it to nuget.org
-name: dotnet-build
+name: "Build & Test"
 on:
   push:
     branches:
