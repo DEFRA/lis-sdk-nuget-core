@@ -38,14 +38,14 @@ jobs:
 
       - name: Store version
         run: |
-          mkdir -p .artifacts
-          echo "${{ steps.calculate_version.outputs.version }}" > .artifacts/version.txt
+          mkdir -p artifacts
+          echo "${{ steps.calculate_version.outputs.version }}" > artifacts/version.txt
 
       - name: Upload version artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-version
-          path: .artifacts/version.txt
+          path: artifacts/version.txt
           if-no-files-found: error
 
   build-pack:
@@ -75,20 +75,20 @@ jobs:
             --product_name=Defra.Core
             --solution_file_name=Core.slnx
             --package_version=${{ needs.calculate-version.outputs.version }}
-            --output_dir=${{ github.workspace }}/.artifacts
+            --output_dir=artifacts
 
       - name: Debug artifacts
         run: |
           echo "Current directory: $(pwd)"
           echo "Workspace: ${{ github.workspace }}"
-          ls -la .artifacts || echo ".artifacts not found"
+          ls -la artifacts || echo "artifacts not found"
           find . -maxdepth 3 -name "*.nupkg"
-          find . -name ".artifacts" -type d
+          find . -name "artifacts" -type d
           env | grep GITHUB
 
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: ${{ github.workspace }}/.artifacts/*.nupkg
+          path: artifacts/*.nupkg
           if-no-files-found: error
