@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -29,6 +29,8 @@ jobs:
       - name: Calculate Version
         id: calculate_version
         uses: cake-build/cake-action@v3
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           script-path: ./version.cake
           target: GetVersion
@@ -37,9 +39,12 @@ jobs:
         run: |
           mkdir -p .artifacts
           echo "${{ steps.calculate_version.outputs.version }}" > .artifacts/version.txt
+          ls -R .artifacts
 
       - name: Build and package
         uses: cake-build/cake-action@v3
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           script-path: ./build.cake
           args: |
@@ -47,6 +52,24 @@ jobs:
             --product_name=Defra.Core
             --solution_file_name=Core.slnx
             --package_version=${{ steps.calculate_version.outputs.version }}
+
+      - name: Sonar Analysis
+        uses: cake-build/cake-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+        with:
+          script-path: ./sonar.cake
+          args: |
+            --target=Sonar
+            --product_name=Defra.Core
+            --solution_file_name=Core.slnx
+            --package_version=${{ steps.calculate_version.outputs.version }}
+
+      - name: Debug artifacts
+        run: |
+          ls -R .artifacts || echo ".artifacts not found"
+          find . -name "*.nupkg"
 
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v4
