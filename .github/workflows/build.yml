@@ -72,11 +72,7 @@ jobs:
         with:
           script-path: ./build.cake
           target: Pack
-          arguments: |
-            --product_name=Defra.Core
-            --solution_file_name=Core.slnx
-            --package_version=${{ needs.calculate-version.outputs.version }}
-            --output_dir=artifacts
+          arguments: "--product_name=Defra.Core --solution_file_name=Core.slnx --package_version=${{ needs.calculate-version.outputs.version }} --output_dir=artifacts"
 
       - name: Debug artifacts
         run: |
