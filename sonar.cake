@@ -2,7 +2,10 @@
 var productName = Argument<string>("product_name", "");
 var solution_file_name = Argument<string>("solution_file_name", "");
 var version = Argument<string>("package_version", "");
-var github_token = Argument<string>("github_token", "");
+var sonarToken = Argument<string>("sonar_token", "");
+const string SonarHostUrl = "https://sonarcloud.io";
+const string SonarOrganization = "defra";
+const string SonarCoverageFile = "coverage.xml";
 
 Task("Sonar-Install")
     .Description("Installs the SonarCloud scanner and dotnet-coverage tools")

@@ -6,11 +6,6 @@ branches:
     increment: Patch
     is-main-branch: true
 
-  master:
-    regex: ^master$
-    increment: Patch
-    is-main-branch: true
-
   feature:
     regex: ^feature?[/-]
     increment: Minor

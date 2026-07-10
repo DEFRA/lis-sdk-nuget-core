@@ -48,6 +48,13 @@ jobs:
     needs: download-artifacts
     runs-on: ubuntu-latest
     steps:
+      - name: Get token
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ vars.LIS_RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.LIS_RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
       - name: Download NuGet package artifact
         uses: actions/download-artifact@v4
         with:

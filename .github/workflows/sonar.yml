@@ -44,7 +44,6 @@ jobs:
       - name: Run tests, coverage and SonarCloud
         uses: cake-build/cake-action@v3
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           script-path: ./sonar.cake
@@ -53,3 +52,4 @@ jobs:
             --product_name=Defra.Core
             --solution_file_name=Core.slnx
             --package_version=${{ needs.get-version.outputs.version }}
+            --sonar_token=${{ secrets.SONAR_TOKEN }}
