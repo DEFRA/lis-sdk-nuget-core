@@ -6,12 +6,12 @@ using System.Text.RegularExpressions;
 
 class RepositoryVersionInfo
 {
-    public string EventName { get; set; }
-    public string BranchName { get; set; }
-    public string StoryId { get; set; }
-    public string BumpType { get; set; }
-    public string Version { get; set; }
-    public string TagMessage { get; set; }
+    public string EventName { get; set; } = string.Empty;
+    public string BranchName { get; set; } = string.Empty;
+    public string StoryId { get; set; } = string.Empty;
+    public string BumpType { get; set; } = string.Empty;
+    public string Version { get; set; } = string.Empty;
+    public string TagMessage { get; set; } = string.Empty;
     public bool IsPreRelease { get; set; }
 }
 
@@ -94,7 +94,7 @@ bool GitTagExists(string value)
     return CommandSucceeds("git", $"rev-parse -q --verify refs/tags/{value}");
 }
 
-string ResolveRepositoryEventName(string eventName = null)
+string ResolveRepositoryEventName(string? eventName = null)
 {
     if (!string.IsNullOrWhiteSpace(eventName))
     {
@@ -104,7 +104,7 @@ string ResolveRepositoryEventName(string eventName = null)
     return EnvironmentVariable("GITHUB_EVENT_NAME") ?? "local";
 }
 
-string ResolveRepositoryBranchName(string branchName = null)
+string ResolveRepositoryBranchName(string? branchName = null)
 {
     var resolvedBranchName = branchName;
 
@@ -137,7 +137,7 @@ void FetchRepositoryVersionState()
     RunGit("fetch --force origin main");
 }
 
-RepositoryVersionInfo CalculateRepositoryVersion(string branchName = null, string eventName = null)
+RepositoryVersionInfo CalculateRepositoryVersion(string? branchName = null, string? eventName = null)
 {
     var resolvedEventName = ResolveRepositoryEventName(eventName);
     var resolvedBranchName = ResolveRepositoryBranchName(branchName);

@@ -2,7 +2,7 @@
 #load "base.cake"
 #load "version.cake"
 
-var target = Argument("target", "Default");
+var target = Argument("target", "Sonar");
 var configuration = Argument("configuration", "Release");
 
 var productName = Argument<string>("product_name", "");
@@ -103,5 +103,8 @@ Task("Sonar-End")
 Task("Sonar")
     .IsDependentOn("Sonar-End")
     .Description("Runs the full SonarCloud analysis pipeline");
+
+Task("Default")
+    .IsDependentOn("Sonar");
 
 RunTarget(target);
