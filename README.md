@@ -1,5 +1,6 @@
 ### Defra Core
 
+A core library to containing common functionality for Defra dotnet projects.
 
 ### Run Cake Files locally
 
