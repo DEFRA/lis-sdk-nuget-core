@@ -31,7 +31,7 @@ Task("Sonar-Install")
     
          Information($"Product Name: {productName}");
          Information($"Solution File: {solution_file_name}");
-
+         Information($"Sonar Token: {sonarToken}");
          if (string.IsNullOrWhiteSpace(sonarToken))
          {
            throw new Exception("Sonar Cloud token is required to run SonarCloud analysis.");
