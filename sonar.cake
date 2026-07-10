@@ -9,7 +9,6 @@ var productName = Argument<string>("product_name", "");
 var solution_file_name = Argument<string>("solution_file_name", "");
 var version = Argument<string>("package_version", "");
 var sonarToken = Argument<string>("sonar_token", "");
-
 const string SonarHostUrl = "https://sonarcloud.io";
 const string SonarOrganization = "defra";
 const string SonarCoverageFile = "coverage.xml";
@@ -29,6 +28,11 @@ Task("Version")
 Task("Sonar-Install")
     .Description("Installs the SonarCloud scanner and dotnet-coverage tools")
     .Does(() => {
+    
+         if (string.IsNullOrWhiteSpace(sonarToken))
+         {
+           throw new Exception("Sonar Cloud token is required to run SonarCloud analysis.");
+         }
         EnsureDirectoryExists("./.sonar/scanner");
         EnsureDirectoryExists("./.sonar/coverage");
 
@@ -46,18 +50,13 @@ Task("Sonar-Begin")
     .IsDependentOn("Version")
     .Description("Starts SonarCloud analysis")
     .Does(() => {
-        if (string.IsNullOrWhiteSpace(sonarToken))
-        {
-            throw new Exception("SONAR_TOKEN environment variable is required to run SonarCloud analysis.");
-        }
-
-        StartProcess(SonarScannerPath, new ProcessSettings {
+          StartProcess(SonarScannerPath, new ProcessSettings {
             Arguments = string.Join(" ", new [] {
                 "begin",
                 $"/k:\"{productName}\"",
                 "/o:\"defra\"",
                 $"/d:sonar.token=\"{sonarToken}\"",
-                $"/d:sonar.host.url=\"{SonarHostUrl }\"",
+                $"/d:sonar.host.url=\"{SonarHostUrl}\"",
                 $"/v:\"{version}\"",
                 "/d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml",
                 "/d:sonar.exclusions=\"changelog/**,.github/**\"",
@@ -90,11 +89,7 @@ Task("Sonar-End")
     .IsDependentOn("Sonar-Test")
     .Description("Completes SonarCloud analysis")
     .Does(() => {
-        if (string.IsNullOrWhiteSpace(sonarToken))
-        {
-            throw new Exception("SONAR_TOKEN environment variable is required to run SonarCloud analysis.");
-        }
-
+       
         StartProcess(SonarScannerPath, new ProcessSettings {
             Arguments = $"end /d:sonar.token=\"{sonarToken}\""
         });
