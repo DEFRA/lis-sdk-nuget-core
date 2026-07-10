@@ -1,11 +1,30 @@
 
+#load "base.cake"
+#load "version.cake"
+
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
+
 var productName = Argument<string>("product_name", "");
 var solution_file_name = Argument<string>("solution_file_name", "");
 var version = Argument<string>("package_version", "");
 var sonarToken = Argument<string>("sonar_token", "");
+
 const string SonarHostUrl = "https://sonarcloud.io";
 const string SonarOrganization = "defra";
 const string SonarCoverageFile = "coverage.xml";
+
+var SonarScannerPath = "./.sonar/scanner/dotnet-sonarscanner";
+var DotNetCoveragePath = "./.sonar/coverage/dotnet-coverage";
+
+Task("Version")
+    .Does(() => {
+        if (string.IsNullOrEmpty(version))
+        {
+            version = CalculateVersion();
+        }
+        Information($"Version: {version}");
+    });
 
 Task("Sonar-Install")
     .Description("Installs the SonarCloud scanner and dotnet-coverage tools")
@@ -38,7 +57,7 @@ Task("Sonar-Begin")
                 $"/k:\"{productName}\"",
                 "/o:\"defra\"",
                 $"/d:sonar.token=\"{sonarToken}\"",
-                "/d:sonar.host.url=\"https://sonarcloud.io\"",
+                $"/d:sonar.host.url=\"{SonarHostUrl }\"",
                 $"/v:\"{version}\"",
                 "/d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml",
                 "/d:sonar.exclusions=\"changelog/**,.github/**\"",
