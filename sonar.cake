@@ -28,10 +28,6 @@ Task("Version")
 Task("Sonar-Install")
     .Description("Installs the SonarCloud scanner and dotnet-coverage tools")
     .Does(() => {
-    
-         Information($"Product Name: {productName}");
-         Information($"Solution File: {solution_file_name}");
-         Information($"Sonar Token: {sonarToken}");
          if (string.IsNullOrWhiteSpace(sonarToken))
          {
            throw new Exception("Sonar Cloud token is required to run SonarCloud analysis.");
