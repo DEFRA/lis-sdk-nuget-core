@@ -1,7 +1,6 @@
 ### Defra Core
 
-A core library to containing common functionality for Defra dotnet projects.
-
+A core library to containing common functionality for Defra dotnet projects. 
 ### Run Cake Files locally
 
 If you want to test the dotnet cake build locally you can run the following command:
