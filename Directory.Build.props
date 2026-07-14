@@ -9,6 +9,8 @@
         <RootNamespace>Defra.Lis.Core</RootNamespace>
         <ProductName>Defra.Lis.Core</ProductName>
         <AssemblyName>$(RootNamespace)</AssemblyName>
+        <PackageTags>defra;dotnet;lis</PackageTags>
+        <RepositoryUrl>https://github.com/defra/lis-sdk-nuget-core</RepositoryUrl>
     </PropertyGroup>
     <ItemGroup>
         <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json">
