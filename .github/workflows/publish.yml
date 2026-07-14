@@ -11,6 +11,7 @@ permissions:
   contents: read
   packages: write
   actions: read
+  id-token: write
 
 jobs:
   download-artifacts:
@@ -49,6 +50,11 @@ jobs:
     needs: download-artifacts
     runs-on: ubuntu-latest
     steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
       - name: Download NuGet packages
         uses: actions/download-artifact@v4
         with:
@@ -59,10 +65,9 @@ jobs:
 
       - name: NuGet login
         id: login
-        uses: NuGet/login-action@v1
+        uses: NuGet/login@v1
         with:
           user: ${{ secrets.NUGET_USERNAME }}
-          password: ${{ secrets.NUGET_API_KEY }}
 
       - name: Push to NuGet.org
-        run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
