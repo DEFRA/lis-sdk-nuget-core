@@ -4,7 +4,7 @@
 
 namespace DefraDigital.Lis.Core.Tests;
 
-using DefraDigital.Lis.Core.Exceptions;
+using Defra.Lis.Core.Exceptions;
 
 /// <summary>
 /// Unit tests for <see cref="ConflictException"/>.

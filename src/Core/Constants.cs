@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace DefraDigital.Lis.Core;
+namespace Defra.Lis.Core;
 
 /// <summary>
 /// Constants used throughout the core library.

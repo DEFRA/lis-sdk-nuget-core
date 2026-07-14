@@ -4,6 +4,8 @@
 
 namespace DefraDigital.Lis.Core.Tests;
 
+using Defra.Lis.Core;
+
 /// <summary>
 /// Unit tests for <see cref="Constants"/>.
 /// </summary>

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace DefraDigital.Lis.Core.Exceptions;
+namespace Defra.Lis.Core.Exceptions;
 
 /// <summary>
 /// Exception thrown when a proxy error occurs.

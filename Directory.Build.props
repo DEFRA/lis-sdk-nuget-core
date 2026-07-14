@@ -6,8 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <RootNamespace>DefraDigital.Lis.Core</RootNamespace>
-        <ProductName>DefraDigital.Lis.Core</ProductName>
+        <RootNamespace>Defra.Lis.Core</RootNamespace>
+        <ProductName>Defra.Lis.Core</ProductName>
         <AssemblyName>$(RootNamespace)</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
