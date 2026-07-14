@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Core.Tests;
+namespace DefraDigital.Lis.Core.Tests;
 
-using Defra.Core.Exceptions;
+using DefraDigital.Lis.Core.Exceptions;
 
 /// <summary>
 /// Unit tests for <see cref="ProxyException"/>.

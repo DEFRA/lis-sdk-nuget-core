@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>Defra.Core.Tests</AssemblyName>
+    <AssemblyName>DefraDigital.Lis.Core.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

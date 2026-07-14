@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Core.Tests;
+namespace DefraDigital.Lis.Core.Tests;
 
 /// <summary>
 /// Unit tests for <see cref="Constants"/>.

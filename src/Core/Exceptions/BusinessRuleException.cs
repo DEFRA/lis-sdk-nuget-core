@@ -2,9 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Core.Exceptions;
-
-using System;
+namespace DefraDigital.Lis.Core.Exceptions;
 
 /// <summary>
 /// Exception thrown when a business rule is violated.
