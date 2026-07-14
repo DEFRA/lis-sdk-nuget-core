@@ -48,34 +48,11 @@ jobs:
     needs: download-artifacts
     runs-on: ubuntu-latest
     steps:
-      - name: Get token
-        uses: actions/create-github-app-token@v3
-        id: app-token
-        with:
-          client-id: ${{ vars.LIS_RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ secrets.LIS_RELEASE_APP_PRIVATE_KEY }}
-          permission-contents: write
-      - name: Download NuGet package artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: nuget-packages
-          path: artifacts
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ needs.download-artifacts.outputs.run_id }}
+      - name: NuGet login
+          id: login
+          uses: NuGet/login-action@v1
+          with:
+            user: ${{ secrets.NUGET_USERNAME }}
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Debug artifacts
-        run: |
-          ls -R artifacts || echo "artifacts not found"
-          find . -name "*.nupkg"
-
-      - name: Publish package to GitHub Packages
-        run: |
-          dotnet nuget push "artifacts/*.nupkg" \
-            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-            --api-key "${{ steps.app-token.outputs.token }}" \
-            --skip-duplicate
+      - name: Push to NuGet.org
+           run: dotnet nuget push ".artifacts/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
