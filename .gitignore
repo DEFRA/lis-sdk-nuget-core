@@ -7,9 +7,13 @@ tools
 *.user
 *.userosscache
 *.sln.docstates
-
+.coverage
+.claude
+artifacts
+.idea
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
 
 # Build results
 [Dd]ebug/
