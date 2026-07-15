@@ -1,20 +1,21 @@
-name: "Build"
+name: "Pull Request"
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
     branches:
-      - feature/LREG-*
-      - hotfix/LREG-*
+      - main
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   get-version:
     name: "Calculate Version"
     uses: ./.github/workflows/version.yml
     with:
-      ref: ${{ github.ref_name }}
+      ref: ${{ github.head_ref }}
 
   build-pack:
     name: "Build, Test and Pack"
@@ -22,7 +23,7 @@ jobs:
     uses: ./.github/workflows/build-pack.yml
     with:
       version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.ref_name }}
+      ref: ${{ github.head_ref }}
 
   sonar-analysis:
     name: "Sonar Analysis"
@@ -30,5 +31,14 @@ jobs:
     uses: ./.github/workflows/sonar.yml
     with:
       version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.ref_name }}
+      ref: ${{ github.head_ref }}
+    secrets: inherit
+
+  publish-nuget:
+    name: "Publish to NuGet"
+    needs: [get-version, build-pack, sonar-analysis]
+    if: needs.sonar-analysis.outputs.quality-gate-status == 'PASSED'
+    uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ needs.get-version.outputs.version }}
     secrets: inherit
