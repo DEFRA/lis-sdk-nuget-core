@@ -61,7 +61,7 @@ Task("Sonar-Begin")
             Arguments = string.Join(" ", new [] {
                 "begin",
                 $"/k:\"{productName}\"",
-                "/o:\"defra\"",
+                $"/o:\"{SonarOrganization}\"",
                 $"/d:sonar.token=\"{sonarToken}\"",
                 $"/d:sonar.host.url=\"{SonarHostUrl}\"",
                 $"/v:\"{version}\"",
