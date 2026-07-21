@@ -44,7 +44,7 @@ jobs:
         uses: cake-build/cake-action@v3
         env:
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-          PRODUCT_NAME: DEFRA_lis_sdk_nuget_core
+          PRODUCT_NAME: ${{ vars.PRODUCT_NAME }}
           SOLUTION_FILE_NAME: Core.slnx
           PACKAGE_VERSION: ${{ inputs.version }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
