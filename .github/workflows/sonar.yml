@@ -45,7 +45,7 @@ jobs:
         env:
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
           PRODUCT_NAME: ${{ vars.PRODUCT_NAME }}
-          SOLUTION_FILE_NAME: Core.slnx
+          SOLUTION_FILE_NAME:  ${{ vars.SOLUTION_FILE_NAME }}
           PACKAGE_VERSION: ${{ inputs.version }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
