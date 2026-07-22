@@ -6,7 +6,7 @@ A core library to containing common functionality for Defra dotnet projects.
 If you want to test the dotnet cake build locally you can run the following command:
 
 ```bash
-dotnet cake ./build.cake --target=Default --product_name=Defra.Core --solution_file_name=../Core.slnx --package_version=0.1.0
+dotnet cake ./build.cake --target=Default --product_name=DEFRA_lis_sdk_nuget_core --solution_file_name=Core.slnx --package_version=0.1.0
 ```
 
 ### Test Github action
@@ -24,3 +24,4 @@ To run github action
 ```sh
 act -W .github/workflows/build.yml 
 ```
+
