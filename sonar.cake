@@ -32,6 +32,10 @@ Task("Sonar-Install")
          {
            throw new Exception("Sonar Cloud token is required to run SonarCloud analysis.");
          }
+         else
+         {
+           Information($"A valid token was provided ending {sonarToken[^Math.Min(4, sonarToken.Length)..]}");
+         }
         EnsureDirectoryExists("./.sonar/scanner");
         EnsureDirectoryExists("./.sonar/coverage");
 
