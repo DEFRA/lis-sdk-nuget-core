@@ -29,7 +29,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nuget-packages
-          path: artifact
+          path: artifacts
+
       - name: NuGet trusted publishing login
         id: nuget-login
         uses: NuGet/login@v1
