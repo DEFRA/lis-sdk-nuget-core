@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace DefraDigital.Lis.Core.Tests;
+namespace Defra.Lis.Core.Tests;
 
 using Defra.Lis.Core.Exceptions;
 

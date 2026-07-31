@@ -18,6 +18,11 @@ public static class StringExtensions
     /// <returns>string converted to snake case.</returns>
     public static string ToSnakeCase(this string text)
     {
+        if (string.IsNullOrEmpty(text))
+        {
+            return text;
+        }
+
         var stringBuilder = new StringBuilder();
         stringBuilder.Append(char.ToLowerInvariant(text[0]));
         for (int index = 1; index < text.Length; ++index)
