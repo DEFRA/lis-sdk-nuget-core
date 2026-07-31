@@ -62,7 +62,7 @@ public string CalculateVersion()
             var match = System.Text.RegularExpressions.Regex.Match(branchName, @"LREG-\d+", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                lreg = match.Value.ToUpper();
+                lreg = match.Value.ToLower();
             }
         }
 
