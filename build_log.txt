@@ -1,0 +1,90 @@
+Build started 08/07/2026 18:43:08.
+     1>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" on node 1 (Restore target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+       _GetAllRestoreProjectPathItems:
+         Determining projects to restore...
+     1>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (1) is building "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj" (3:5) on node 2 (_GenerateProjectRestoreGraph target(s)).
+     3>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+     1>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (1) is building "/home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj" (2:6) on node 1 (_GenerateProjectRestoreGraph target(s)).
+     2>AddPrunePackageReferences:
+         Loading prune package data from PrunePackageData folder
+         Failed to load prune package data from PrunePackageData folder, loading from targeting packs instead
+     3>AddPrunePackageReferences:
+         Looking for targeting packs in /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref
+         Pack directories found: /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/10.0.9
+     2>AddPrunePackageReferences:
+         Looking for targeting packs in /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref
+         Pack directories found: /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/10.0.9
+         Found package overrides file /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/10.0.9/data/PackageOverrides.txt
+     3>AddPrunePackageReferences:
+         Found package overrides file /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/10.0.9/data/PackageOverrides.txt
+     2>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj" (_GenerateProjectRestoreGraph target(s)).
+     3>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj" (_GenerateProjectRestoreGraph target(s)).
+     1>Restore:
+         X.509 certificate chain validation will use the fallback certificate bundle at '/usr/lib/dotnet/sdk/10.0.109/trustedroots/codesignctl.pem'.
+         X.509 certificate chain validation will use the fallback certificate bundle at '/usr/lib/dotnet/sdk/10.0.109/trustedroots/timestampctl.pem'.
+         Restoring packages for /home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj...
+         Restoring packages for /home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj...
+           CACHE https://api.nuget.org/v3/vulnerabilities/index.json
+           CACHE https://api.nuget.org/v3-vulnerabilities/2026.07.08.00.14.58/vulnerability.base.json
+           CACHE https://api.nuget.org/v3-vulnerabilities/2026.07.08.00.14.58/2026.07.08.00.14.58/vulnerability.update.json
+         Writing assets file to disk. Path: /home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/obj/project.assets.json
+         Restored /home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj (in 316 ms).
+         Writing assets file to disk. Path: /home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/obj/project.assets.json
+         Restored /home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj (in 351 ms).
+         
+         NuGet Config files used:
+             /home/gary/.nuget/NuGet/NuGet.Config
+         
+         Feeds used:
+             https://api.nuget.org/v3/index.json
+             /usr/lib/dotnet/library-packs
+     1>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (Restore target(s)).
+   1:2>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" on node 1 (default targets).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+   1:2>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (1:2) is building "/home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj" (2:7) on node 1 (default targets).
+     2>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj/Debug/net10.0/Core.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         Core -> /home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/bin/Debug/net10.0/Defra.Core.dll
+     2>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/Core.csproj" (default targets).
+   1:2>Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (1:2) is building "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj" (3:6) on node 2 (default targets).
+     3>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       _GenerateSelfRegisteredExtensions:
+       Skipping target "_GenerateSelfRegisteredExtensions" because all output files are up-to-date with respect to the input files.
+       _XunitGenerateEntryPoint:
+       Skipping target "_XunitGenerateEntryPoint" because all output files are up-to-date with respect to the input files.
+       CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj/Debug/net10.0/Core.Tests.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       _CreateAppHost:
+       Skipping target "_CreateAppHost" because all output files are up-to-date with respect to the input files.
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       Building target "_CopyOutOfDateSourceItemsToOutputDirectory" partially, because some output files are out of date with respect to their input files.
+         Copying file from "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/obj/Debug/net10.0/MvcTestingAppManifest.json" to "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/bin/Debug/net10.0/MvcTestingAppManifest.json".
+       CopyFilesToOutputDirectory:
+         Core.Tests -> /home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/bin/Debug/net10.0/Defra.Core.Tests.dll
+       _MvcCopyDependencyFiles:
+         Copying file from "/home/gary/Documents/defra/lis-sdk-nuget-core/src/Core/bin/Debug/net10.0/Defra.Core.deps.json" to "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/bin/Debug/net10.0/Defra.Core.deps.json".
+     3>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/tests/Core.Tests/Core.Tests.csproj" (default targets).
+     1>Done Building Project "/home/gary/Documents/defra/lis-sdk-nuget-core/Core.slnx" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.52
