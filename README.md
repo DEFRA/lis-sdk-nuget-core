@@ -99,8 +99,6 @@ using Defra.Lis.Core.Extensions;
 
 ## Setup
 
-Inside a lis-dev checkout, restore fails with NU1507, because lis-dev's `nuget.config` lists two package sources without a package source mapping. Build from a standalone clone, or pass `--configfile` pointing at a config that lists only nuget.org.
-
 ### Development
 
 ```bash
