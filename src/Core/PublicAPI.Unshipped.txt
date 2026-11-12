@@ -1,0 +1,25 @@
+#nullable enable
+Defra.Livestock.Sdk.Core.Constants
+Defra.Livestock.Sdk.Core.Exceptions.BusinessRuleException
+Defra.Livestock.Sdk.Core.Exceptions.BusinessRuleException.BusinessRuleException(string! message) -> void
+Defra.Livestock.Sdk.Core.Exceptions.ConflictException
+Defra.Livestock.Sdk.Core.Exceptions.ConflictException.ConflictException(string! message) -> void
+Defra.Livestock.Sdk.Core.Exceptions.NotFoundException
+Defra.Livestock.Sdk.Core.Exceptions.NotFoundException.NotFoundException(string! message) -> void
+Defra.Livestock.Sdk.Core.Exceptions.ProxyException
+Defra.Livestock.Sdk.Core.Exceptions.ProxyException.ProxyException(string! message) -> void
+Defra.Livestock.Sdk.Core.Extensions.GuidExtensions
+Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.extension(System.Guid)
+Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.extension(System.Guid).CreateDisplayHash(int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true) -> string!
+Defra.Livestock.Sdk.Core.Extensions.StringExtensions
+Defra.Livestock.Sdk.Core.Extensions.StringExtensions.extension(string!)
+Defra.Livestock.Sdk.Core.Extensions.StringExtensions.extension(string!).CreateDisplayHash(int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true) -> string!
+Defra.Livestock.Sdk.Core.Extensions.StringExtensions.extension(string!).ToSnakeCase() -> string!
+Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames
+const Defra.Livestock.Sdk.Core.Constants.ProxyName = "CDP_HTTPS_PROXY" -> string!
+const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.ApiKey = "x-api-key" -> string!
+const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.CorrelationId = "x-correlation-id" -> string!
+const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.OperatorId = "x-operator-id" -> string!
+static Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.CreateDisplayHash(this System.Guid source, int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true) -> string!
+static Defra.Livestock.Sdk.Core.Extensions.StringExtensions.CreateDisplayHash(this string! source, int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true) -> string!
+static Defra.Livestock.Sdk.Core.Extensions.StringExtensions.ToSnakeCase(this string! source) -> string!

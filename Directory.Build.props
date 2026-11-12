@@ -2,15 +2,16 @@
 <Project>
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
+        <AnalysisLevel>10.0-recommended</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <ImplicitUsings>true</ImplicitUsings>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <RootNamespace>Defra.Lis.Core</RootNamespace>
-        <ProductName>Defra.Lis.Core</ProductName>
+        <RootNamespace>Defra.Livestock.Sdk.Core</RootNamespace>
+        <ProductName>Defra.Livestock.Sdk.Core</ProductName>
         <AssemblyName>$(RootNamespace)</AssemblyName>
-        <PackageTags>defra;dotnet;lis</PackageTags>
+        <PackageTags>defra;dotnet;livestock</PackageTags>
         <RepositoryUrl>https://github.com/defra/lis-sdk-nuget-core</RepositoryUrl>
     </PropertyGroup>
     <ItemGroup>

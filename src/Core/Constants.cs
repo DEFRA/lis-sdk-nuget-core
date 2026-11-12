@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Lis.Core;
+namespace Defra.Livestock.Sdk.Core;
 
 /// <summary>
 /// Constants used throughout the core library.

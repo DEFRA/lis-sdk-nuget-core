@@ -1,6 +1,6 @@
 <Project>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
     <PropertyGroup>
-        <RootNamespace>Defra.Lis.Core.Tests</RootNamespace>
+        <RootNamespace>$(RootNamespace).Tests</RootNamespace>
     </PropertyGroup>
 </Project>

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Lis.Core.Middleware.Headers;
+namespace Defra.Livestock.Sdk.Core.Middleware.Headers;
 
 /// <summary>
 /// Request header names.
