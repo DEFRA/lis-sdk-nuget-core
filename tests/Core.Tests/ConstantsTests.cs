@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Lis.Core.Tests;
+namespace Defra.Livestock.Sdk.Core.Tests;
 
 /// <summary>
 /// Unit tests for <see cref="Constants"/>.

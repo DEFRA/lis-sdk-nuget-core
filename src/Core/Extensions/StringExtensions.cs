@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Lis.Core.Extensions;
+namespace Defra.Livestock.Sdk.Core.Extensions;
 
 using System.Text;
 
@@ -11,34 +11,50 @@ using System.Text;
 /// </summary>
 public static class StringExtensions
 {
-    /// <summary>
-    /// convert string to snake case.
-    /// </summary>
-    /// <param name="text">text to convert.</param>
-    /// <returns>string converted to snake case.</returns>
-    public static string ToSnakeCase(this string text)
+    extension(string source)
     {
-        if (string.IsNullOrEmpty(text))
+        /// <summary>
+        /// convert string to snake case.
+        /// </summary>
+        /// <returns>string converted to snake case.</returns>
+        public string ToSnakeCase()
         {
-            return text;
+            if (string.IsNullOrEmpty(source))
+            {
+                return source;
+            }
+
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(char.ToLowerInvariant(source[0]));
+            for (int index = 1; index < source.Length; ++index)
+            {
+                var c = source[index];
+                if (char.IsUpper(c))
+                {
+                    stringBuilder.Append('_');
+                    stringBuilder.Append(char.ToLowerInvariant(c));
+                }
+                else
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString();
         }
 
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append(char.ToLowerInvariant(text[0]));
-        for (int index = 1; index < text.Length; ++index)
+        /// <summary>
+        /// Generate a display hash for a string based guid.
+        /// </summary>
+        /// <param name="length">The length to generate. Default is 9.</param>
+        /// <param name="charactersPerGroup">The number of characters per group. Default is 3.</param>
+        /// <param name="crockfordReplacement">Replace characters that can be mistaken. True by default.</param>
+        /// <returns>The string hash.</returns>
+        public string CreateDisplayHash(int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true)
         {
-            var c = text[index];
-            if (char.IsUpper(c))
-            {
-                stringBuilder.Append('_');
-                stringBuilder.Append(char.ToLowerInvariant(c));
-            }
-            else
-            {
-                stringBuilder.Append(c);
-            }
+            return !Guid.TryParse(source, out var guid)
+                ? throw new InvalidCastException("Invalid GUID")
+                : guid.CreateDisplayHash(length, charactersPerGroup, crockfordReplacement);
         }
-
-        return stringBuilder.ToString();
     }
 }

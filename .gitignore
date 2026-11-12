@@ -7,13 +7,9 @@ tools
 *.user
 *.userosscache
 *.sln.docstates
-.coverage
-.claude
-artifacts
-.idea
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
 
 # Build results
 [Dd]ebug/
@@ -26,8 +22,6 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-
-build/.coverage
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -282,3 +276,5 @@ coverage/
 # Agents
 .ai/
 .junie/
+
+.cake/
