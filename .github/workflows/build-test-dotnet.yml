@@ -48,7 +48,8 @@ jobs:
   detect-features:
     runs-on: ubuntu-latest
     outputs:
-      has-dockerfile: ${{ steps.detect.outputs.has-dockerfile }}
+      has-dockerfile: ${{ steps.detect-docker.outputs.has-dockerfile }}
+      has-nuget: ${{ steps.detect-nuget.outputs.has-nuget }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -56,7 +57,7 @@ jobs:
           ref: ${{ inputs.ref }}
 
       - name: Check for Dockerfile
-        id: detect
+        id: detect-docker
         run: |
           if [[ -f Dockerfile ]]; then
             echo "has-dockerfile=true" >> "$GITHUB_OUTPUT"
@@ -64,14 +65,29 @@ jobs:
             echo "has-dockerfile=false" >> "$GITHUB_OUTPUT"
           fi
           
-      - name: Check for nuget
-        id: detect
+      - name: Setup .NET
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Check for NuGet projects
+        id: detect-nuget
+        shell: bash
         run: |
-          if [[ -f Dockerfile ]]; then
-            echo "has-dockerfile=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has-dockerfile=false" >> "$GITHUB_OUTPUT"
-          fi
+          has_nuget=false
+          while IFS= read -r -d '' project; do
+            is_packable=$(dotnet msbuild "$project" \
+              -getProperty:IsPackable \
+              -p:Configuration=Release \
+              -nologo)
+            if [[ "${is_packable,,}" == 'true' ]]; then
+              echo "Packable project: $project"
+              has_nuget=true
+            fi
+          done < <(find . -type d \( -name .git -o -name bin -o -name obj \) -prune \
+            -o -type f -name '*.csproj' -print0)
+          echo "has-nuget=$has_nuget" >> "$GITHUB_OUTPUT"
+          
   build-test:
     name: 'Build and test'
     needs: detect-features
@@ -107,7 +123,7 @@ jobs:
           script-path: ./build.cake
           target: Build
 
-  build-image:
+  build-test-docker:
     name: 'Build and Test Container Image'
     needs: detect-features
     if: needs.detect-features.outputs.has-dockerfile == 'true'
@@ -238,3 +254,12 @@ jobs:
           path: container-artifact
           if-no-files-found: error
           compression-level: 0
+          
+  
+  build-nuget:
+    name: 'Build and Test Nuget package'
+    needs: detect-features
+    if: needs.detect-features.outputs.has-nuget == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      
