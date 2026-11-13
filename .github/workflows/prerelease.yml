@@ -25,7 +25,7 @@ jobs:
   validate:
     name: 'Validate'
     needs: get-version
-    uses: DEFRA/lis-github-actions/.github/workflows/dotnet-service-validate.yml@0.5.0
+    uses: ./.github/workflows/build-test-dotnet.yml
     with:
       version: ${{ needs.get-version.outputs.version }}
       ref: ${{ github.sha }}
@@ -44,7 +44,7 @@ jobs:
     name: 'Tag Validated Commit'
     needs: [get-version, validate, sonar-analysis]
     if: needs.sonar-analysis.outputs.quality-gate-status == 'PASSED'
-    uses: DEFRA/lis-github-actions/.github/workflows/tag.yml@0.5.0
+    uses: ./.github/workflows/tag.yml
     with:
       version: ${{ needs.get-version.outputs.version }}
       ref: ${{ github.sha }}
