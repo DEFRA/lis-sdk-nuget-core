@@ -1,0 +1,240 @@
+name: 'Validate'
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      ref:
+        description: 'Git ref or commit SHA to validate'
+        required: true
+        type: string
+      pre-build-cake-script:
+        description: 'Cake script to run before build.cake, for example ./liquibase.cake; empty to skip'
+        required: false
+        type: string
+        default: ''
+      pre-build-cake-target:
+        description: 'Target for the pre-build cake script'
+        required: false
+        type: string
+        default: 'Default'
+      smoke-port:
+        description: 'Port the service listens on inside the container (ASPNETCORE_URLS); published on 3101 for the health check'
+        required: false
+        type: string
+        default: '3000'
+      smoke-env:
+        description: 'Extra environment for the smoke test, one KEY=VALUE per line'
+        required: false
+        type: string
+        default: ''
+      smoke-postgres:
+        description: 'Start a PostgreSQL sidecar reachable as host "postgres" (database, user and password "smoke")'
+        required: false
+        type: boolean
+        default: false
+      health-path:
+        description: 'Path polled until it returns 2xx'
+        required: false
+        type: string
+        default: '/health'
+
+permissions:
+  contents: read
+
+jobs:
+  detect-features:
+    runs-on: ubuntu-latest
+    outputs:
+      has-dockerfile: ${{ steps.detect.outputs.has-dockerfile }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Check for Dockerfile
+        id: detect
+        run: |
+          if [[ -f Dockerfile ]]; then
+            echo "has-dockerfile=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-dockerfile=false" >> "$GITHUB_OUTPUT"
+          fi
+          
+      - name: Check for nuget
+        id: detect
+        run: |
+          if [[ -f Dockerfile ]]; then
+            echo "has-dockerfile=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-dockerfile=false" >> "$GITHUB_OUTPUT"
+          fi
+  build-test:
+    name: 'Build and test'
+    needs: detect-features
+    if: needs.detect-features.outputs.has-dockerfile == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Validate pre-build script
+        if: inputs.pre-build-cake-script != ''
+        uses: cake-build/cake-action@ba3e4038094f93cd11603648f97d23d1ca7058b8 # master after v3.0.1: runs on node24 (unreleased)
+        env:
+          PACKAGE_VERSION: ${{ inputs.version }}
+        with:
+          cake-version: 6.3.0
+          script-path: ${{ inputs.pre-build-cake-script }}
+          target: ${{ inputs.pre-build-cake-target }}
+
+      - name: Validate App
+        uses: cake-build/cake-action@ba3e4038094f93cd11603648f97d23d1ca7058b8 # master after v3.0.1: runs on node24 (unreleased)
+        env:
+          PACKAGE_VERSION: ${{ inputs.version }}
+        with:
+          cake-version: 6.3.0
+          script-path: ./build.cake
+          target: Build
+
+  build-image:
+    name: 'Build and Test Container Image'
+    needs: detect-features
+    if: needs.detect-features.outputs.has-dockerfile == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Prepare image metadata
+        id: image
+        env:
+          IMAGE_NAME: ${{ github.event.repository.name }}
+          REVISION: ${{ inputs.ref }}
+        run: |
+          echo "ref=$IMAGE_NAME:build-$REVISION" >> "$GITHUB_OUTPUT"
+          echo "artifact=container-image-$REVISION" >> "$GITHUB_OUTPUT"
+
+      - name: Build docker image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          target: production
+          no-cache: true
+          provenance: false
+          sbom: false
+          load: true
+          tags: |
+            ${{ github.event.repository.name }}:${{ inputs.version }}
+          labels: |
+            defra.cdp.git.repo.url=https://github.com/${{ github.event.repository.name }}
+            defra.cdp.git.repo.name=${{ github.event.repository.name }}
+            defra.cdp.service.name=${{ github.event.repository.name }}
+            defra.cdp.build.run_id=${{ github.run_id }}
+            defra.cdp.run_mode=service
+            git.hash=${{ inputs.ref }}
+            org.opencontainers.image.version=${{ inputs.version }}
+
+      - name: Smoke test production image
+        env:
+          IMAGE: ${{ steps.image.outputs.ref }}
+          PORT: ${{ inputs.smoke-port }}
+          SMOKE_ENV: ${{ inputs.smoke-env }}
+          SMOKE_POSTGRES: ${{ inputs.smoke-postgres }}
+          HEALTH_PATH: ${{ inputs.health-path }}
+        run: |
+          network="$(uuidgen)"
+          database=''
+          container=''
+
+          # shellcheck disable=SC2317 # invoked by the EXIT trap
+          cleanup() {
+            if [[ -n "$container" ]]; then
+              docker logs "$container" || true
+              docker rm --force "$container" || true
+            fi
+            if [[ -n "$database" ]]; then
+              docker logs "$database" || true
+              docker rm --force "$database" || true
+            fi
+            docker network rm "$network" || true
+          }
+          trap cleanup EXIT
+
+          docker network create "$network"
+
+          if [[ "$SMOKE_POSTGRES" == 'true' ]]; then
+            database=$(docker run \
+              --detach \
+              --network "$network" \
+              --network-alias postgres \
+              --env POSTGRES_DB=smoke \
+              --env POSTGRES_USER=smoke \
+              --env POSTGRES_PASSWORD=smoke \
+              postgres:16-alpine)
+
+            for attempt in {1..30}; do
+              if docker exec "$database" pg_isready --username smoke --dbname smoke >/dev/null; then
+                break
+              fi
+              if [[ "$attempt" -eq 30 ]]; then
+                echo 'PostgreSQL did not become ready within 30 seconds.' >&2
+                exit 1
+              fi
+              sleep 1
+            done
+          fi
+
+          env_args=()
+          while IFS= read -r line; do
+            [[ -n "$line" ]] && env_args+=(--env "$line")
+          done <<< "$SMOKE_ENV"
+
+          container=$(docker run \
+            --detach \
+            --network "$network" \
+            --env "ASPNETCORE_URLS=http://+:$PORT" \
+            "${env_args[@]}" \
+            --publish "3101:$PORT" \
+            "$IMAGE")
+
+          for _ in {1..30}; do
+            if curl --fail --silent --show-error "http://localhost:3101$HEALTH_PATH" >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo 'Container did not become healthy within 30 seconds.' >&2
+          exit 1
+
+      - name: Export tested image
+        env:
+          IMAGE: ${{ steps.image.outputs.ref }}
+        run: |
+          mkdir container-artifact
+          docker image inspect "$IMAGE" --format '{{.Id}}' > container-artifact/image-id.txt
+          printf '%s\n' "$IMAGE" > container-artifact/image-ref.txt
+          docker save --output container-artifact/image.tar "$IMAGE"
+
+      - name: Upload tested image artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.image.outputs.artifact }}
+          path: container-artifact
+          if-no-files-found: error
+          compression-level: 0
