@@ -99,3 +99,12 @@ jobs:
 
           printf 'Base stable tag: %s; calculated version: %s\n' "$base_tag" "$version"
           printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+          {
+            printf '### Calculated version\n\n```text\n'
+            printf 'Version: %s\n' "$version"
+            printf 'Base stable tag: %s\n' "$base_tag"
+            printf 'Release type: %s\n' "$RELEASE_TYPE"
+            printf 'Branch: %s\n' "$VERSION_BRANCH"
+            printf 'Commit: %s\n' "$(git rev-parse HEAD)"
+            printf '```\n'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
