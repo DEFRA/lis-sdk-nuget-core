@@ -154,7 +154,7 @@ dotnet tests/Core.Tests/bin/Debug/net10.0/DefraDigital.Lis.Core.Tests.dll
 
 ## Pipelines
 
-GitHub Actions use reusable workflows from `DEFRA/lis-github-actions`, pinned to `0.5.0`. The repository no longer uses Cake scripts or a local GitVersion configuration.
+GitHub Actions use the local reusable workflows in `.github/workflows`. The repository no longer uses Cake scripts or a local GitVersion configuration.
 
 | Workflow | Trigger | Configured behaviour |
 |---|---|---|
@@ -162,13 +162,11 @@ GitHub Actions use reusable workflows from `DEFRA/lis-github-actions`, pinned to
 | [Pull Request Validation](.github/workflows/pull-request.yml) | Pull request opened, updated or reopened against `main` | Calculate a prospective version, validate and run Sonar analysis; aggregate the job results into a required check |
 | [Release](.github/workflows/release.yml) | Pull request merged into `main` | Calculate a stable version, validate and run Sonar analysis, then tag the merged commit when validation succeeds and the quality gate passes |
 | [Publish](.github/workflows/publish.yml) | Push of a tag matching `*.*.*` | Call the reusable NuGet publishing workflow |
-| [Publish NuGet](.github/workflows/publish-nuget.yml) | Called by another workflow | Download the `nuget-packages` artifact and push packages to NuGet.org using trusted publishing in the `release` environment; requires `NUGET_USERNAME` |
+| [Publish NuGet](.github/workflows/publish-nuget.yml) | Called by another workflow | Download the versioned `nuget-packages-<version>` artifact and push packages to NuGet.org using trusted publishing in the `release` environment; requires `NUGET_USERNAME` |
 
-The workflows currently need wiring changes before this flow can run end to end:
+Publishing requires an artifact built from the tagged commit by a successful prerelease or release workflow. The artifact records its commit, version, workflow run and attempt; publishing waits for that attempt to finish successfully before authenticating with NuGet. Artifacts created before this provenance record was added must be rebuilt before publishing.
 
-- Validation and release workflows reference `.github/workflows/dotnet-sonar.yml`, which is absent from this checkout.
-- The tag-triggered publish workflow does not supply the required `version` input to the reusable NuGet workflow.
-- NuGet publishing expects a `nuget-packages` artifact in its workflow run, but the tag-triggered workflow has no build or artifact upload job.
+Dependabot branches receive patch versions. Their PR validation versions use the label `dependabot-alpha.<run>.<attempt>`; feature and hotfix prereleases continue to require an LREG ticket.
 
 ## Branching policy
 

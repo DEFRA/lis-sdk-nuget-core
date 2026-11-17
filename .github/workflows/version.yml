@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       branch:
-        description: 'Feature or hotfix branch used to determine the version bump'
+        description: 'Feature, hotfix or Dependabot branch used to determine the version bump'
         required: true
         type: string
       release-type:
@@ -53,8 +53,8 @@ jobs:
             *) echo 'release-type must be stable or prerelease' >&2; exit 1 ;;
           esac
           case "$VERSION_BRANCH" in
-            feature/*|hotfix/*) ;;
-            *) echo 'branch must start with feature/ or hotfix/' >&2; exit 1 ;;
+            feature/*|hotfix/*|dependabot/*) ;;
+            *) echo 'branch must start with feature/, hotfix/ or dependabot/' >&2; exit 1 ;;
           esac
 
           # Compare numeric SemVer components, ignoring all prerelease tags.
@@ -87,13 +87,17 @@ jobs:
           version="$major.$minor.$patch"
 
           if [[ "$RELEASE_TYPE" == prerelease ]]; then
-            branch_name=$(printf '%s' "${VERSION_BRANCH#*/}" | tr '[:lower:]' '[:upper:]')
-            ticket_pattern='(^|[^A-Z0-9])(LREG-[0-9]+)($|[^A-Z0-9])'
-            if [[ ! "$branch_name" =~ $ticket_pattern ]]; then
-              echo 'prerelease branch must contain an LREG ticket (for example LREG-123)' >&2
-              exit 1
+            if [[ "$VERSION_BRANCH" == dependabot/* ]]; then
+              ticket=dependabot
+            else
+              branch_name=$(printf '%s' "${VERSION_BRANCH#*/}" | tr '[:lower:]' '[:upper:]')
+              ticket_pattern='(^|[^A-Z0-9])(LREG-[0-9]+)($|[^A-Z0-9])'
+              if [[ ! "$branch_name" =~ $ticket_pattern ]]; then
+                echo 'prerelease branch must contain an LREG ticket (for example LREG-123)' >&2
+                exit 1
+              fi
+              ticket="${BASH_REMATCH[2]}"
             fi
-            ticket="${BASH_REMATCH[2]}"
             version+="-$ticket-alpha.$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT"
           fi
 

@@ -22,6 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
+      - name: Checkout version tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.version }}
+          persist-credentials: false
+
       - name: Find package build artifact
         id: find-artifact
         env:
@@ -30,6 +36,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          tagged_commit=$(git rev-parse HEAD)
           artifacts=$(gh api --method GET "repos/$GITHUB_REPOSITORY/actions/artifacts" \
             -f name="$ARTIFACT_NAME" -f per_page=100 --paginate --slurp)
           candidates=$(jq -r --arg name "$ARTIFACT_NAME" \
@@ -41,9 +48,11 @@ jobs:
             [[ -n "$artifact_id" ]] || continue
             run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id")
             # PR validation also uploads packages; only publish release builds.
-            if ! jq -e '
+            if ! jq -e --arg commit "$tagged_commit" '
+              .head_sha == $commit and
+              (.status != "completed" or .conclusion == "success") and (
               (.path == ".github/workflows/prerelease.yml" and .event == "push") or
-              (.path == ".github/workflows/release.yml" and .event == "pull_request")
+              (.path == ".github/workflows/release.yml" and .event == "pull_request"))
             ' <<< "$run" > /dev/null; then
               continue
             fi
@@ -73,6 +82,40 @@ jobs:
           run-id: ${{ steps.find-artifact.outputs.run-id }}
           github-token: ${{ github.token }}
           path: artifacts
+          merge-multiple: true
+
+      - name: Verify package provenance and completed validation
+        timeout-minutes: 12
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+          BUILD_RUN_ID: ${{ steps.find-artifact.outputs.run-id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tagged_commit=$(git rev-parse HEAD)
+          jq -e --arg commit "$tagged_commit" \
+            --arg version "$PACKAGE_VERSION" --arg run_id "$BUILD_RUN_ID" '
+            .commit == $commit and .version == $version and .run_id == $run_id and
+            (.run_attempt | test("^[1-9][0-9]*$"))
+          ' artifacts/provenance.json > /dev/null
+          attempt=$(jq -r '.run_attempt' artifacts/provenance.json)
+
+          # Pushing the tag starts this workflow before the tagging run finishes.
+          # Check the exact attempt that uploaded the artifact, including on reruns.
+          for _ in {1..60}; do
+            run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$BUILD_RUN_ID/attempts/$attempt")
+            if [[ $(jq -r '.status' <<< "$run") == completed ]]; then
+              if jq -e '.conclusion == "success"' <<< "$run" > /dev/null; then
+                exit 0
+              fi
+              echo 'The package build workflow did not succeed.' >&2
+              exit 1
+            fi
+            sleep 10
+          done
+          echo 'Timed out waiting for package validation to complete.' >&2
+          exit 1
 
       - name: NuGet trusted publishing login
         id: nuget-login

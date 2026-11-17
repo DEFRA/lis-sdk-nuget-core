@@ -1,7 +1,32 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
-    
+
+  <!-- NuGet metadata -->
+  <PropertyGroup>
+    <PackageId>$(RootNamespace)</PackageId>
+    <Version Condition="'$(Version)' == ''">0.1.0</Version>
+    <Authors>Defra</Authors>
+    <Company>Defra</Company>
+    <Description>Shared building blocks for Livestock Information Service (LIS) .NET services, including exception types, request header names, constants, string extensions and GUID display hashes.</Description>
+    <PackageTags>defra;dotnet;livestock</PackageTags>
+
+    <PackageProjectUrl>https://github.com/DEFRA/lis-sdk-nuget-core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DEFRA/lis-sdk-nuget-core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
   <PropertyGroup>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="$(MSBuildThisFileDirectory)../icon.png" Pack="true" PackagePath="/" />
+    <None Include="$(MSBuildProjectDirectory)/README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

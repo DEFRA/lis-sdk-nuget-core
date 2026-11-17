@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   get-version:
-    name: 'Calculate Stable Version'
+    name: 'Calculate Version'
     if: github.event.pull_request.merged == true
     uses: ./.github/workflows/version.yml
     with:
@@ -22,8 +22,8 @@ jobs:
       branch: ${{ github.event.pull_request.head.ref }}
       release-type: stable
 
-  validate:
-    name: 'Validate Merged Commit'
+  build-test-pack:
+    name: 'Build test and pack'
     needs: get-version
     uses: ./.github/workflows/build-test-dotnet.yml
     with:
@@ -42,9 +42,9 @@ jobs:
 
   create-tag:
     name: 'Tag Main'
-    needs: [get-version, validate, sonar-analysis]
+    needs: [get-version, build-test-pack, sonar-analysis]
     if: needs.sonar-analysis.outputs.quality-gate-status == 'PASSED'
-    uses: DEFRA/lis-github-actions/.github/workflows/tag.yml@0.5.0
+    uses: ./.github/workflows/tag.yml
     with:
       version: ${{ needs.get-version.outputs.version }}
       ref: ${{ github.event.pull_request.merge_commit_sha }}
