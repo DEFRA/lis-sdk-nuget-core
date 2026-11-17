@@ -22,8 +22,8 @@ jobs:
       branch: ${{ github.ref_name }}
       release-type: prerelease
 
-  validate:
-    name: 'Validate'
+  build-test-pack:
+    name: 'Build test and pack'
     needs: get-version
     uses: ./.github/workflows/build-test-dotnet.yml
     with:
@@ -42,7 +42,7 @@ jobs:
 
   create-tag:
     name: 'Tag Validated Commit'
-    needs: [get-version, validate, sonar-analysis]
+    needs: [get-version, build-test-pack, sonar-analysis]
     if: needs.sonar-analysis.outputs.quality-gate-status == 'PASSED'
     uses: ./.github/workflows/tag.yml
     with:

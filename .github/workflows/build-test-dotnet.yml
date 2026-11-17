@@ -1,4 +1,4 @@
-name: 'Validate'
+name: 'Build and Test dotnet projects'
 
 on:
   workflow_call:
@@ -15,11 +15,6 @@ on:
         required: false
         type: string
         default: ''
-      pre-build-cake-target:
-        description: 'Target for the pre-build cake script'
-        required: false
-        type: string
-        default: 'Default'
       smoke-port:
         description: 'Port the service listens on inside the container (ASPNETCORE_URLS); published on 3101 for the health check'
         required: false
@@ -90,7 +85,6 @@ jobs:
           
   build-test-app:
     name: 'Build and test source'
-    needs: detect-features
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
