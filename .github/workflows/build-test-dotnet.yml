@@ -261,7 +261,7 @@ jobs:
         id: upload-nuget
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: nuget-packages
+          name: nuget-packages-${{ inputs.version }}
           path: |
             artifacts/nuget/*.nupkg
             artifacts/nuget/*.snupkg
@@ -285,7 +285,7 @@ jobs:
           print(f'Source ref: {os.environ["SOURCE_REF"]}')
           commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
           print(f'Commit: {commit}')
-          print('Artifact: nuget-packages')
+          print(f'Artifact: nuget-packages-{os.environ["PACKAGE_VERSION"]}')
           for package in sorted(Path('artifacts/nuget').glob('*.nupkg')):
               with zipfile.ZipFile(package) as archive:
                   nuspec = next(name for name in archive.namelist() if name.endswith('.nuspec'))
