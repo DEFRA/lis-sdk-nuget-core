@@ -17,7 +17,12 @@ permissions:
 jobs:
   publish:
     name: 'Publish'
-    uses: DEFRA/lis-github-actions/.github/workflows/publish-nuget.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ github.ref_name }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    steps:
+      - name: Publish NuGet packages
+        uses: DEFRA/lis-github-actions/.github/actions/publish-nuget@1a03c6a3bf26b0aae6a08210d77c2970bd7f4298 # unreleased; based on v0.9.0
+        with:
+          version: ${{ github.ref_name }}
+          user: ${{ secrets.NUGET_USERNAME }}

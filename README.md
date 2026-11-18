@@ -13,7 +13,7 @@ Used by: LIS .NET services such as [lis-api-cattle](https://github.com/DEFRA/lis
 dotnet add package Defra.Livestock.Sdk.Core
 ```
 
-The current project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](.github/workflows/publish.yml) and [reusable NuGet workflow](https://github.com/DEFRA/lis-github-actions/blob/0.9.0/.github/workflows/publish-nuget.yml).
+The current project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](.github/workflows/publish.yml) and [composite NuGet action](https://github.com/DEFRA/lis-github-actions/blob/1a03c6a3bf26b0aae6a08210d77c2970bd7f4298/.github/actions/publish-nuget/action.yml).
 
 ## Usage
 
@@ -154,15 +154,17 @@ dotnet tests/Core.Tests/bin/Debug/net10.0/DefraDigital.Lis.Core.Tests.dll
 
 ## Pipelines
 
-GitHub Actions use reusable workflows from `DEFRA/lis-github-actions`, pinned to `0.9.0`. The repository no longer uses Cake scripts or a local GitVersion configuration.
+GitHub Actions use reusable workflows from `DEFRA/lis-github-actions`, pinned to the commit for `0.9.0`. NuGet publishing uses a separately pinned composite action in a job defined in this repository. The repository no longer uses Cake scripts or a local GitVersion configuration.
 
 | Workflow | Trigger | Configured behaviour |
 |---|---|---|
 | [Prerelease](.github/workflows/prerelease.yml) | Push to `feature/**` or `hotfix/**` | Calculate a prerelease version, validate and run Sonar analysis, then tag the commit when validation succeeds and the quality gate passes |
 | [Pull Request Validation](.github/workflows/pull-request.yml) | Pull request opened, updated or reopened against `main` | Calculate a prospective version, validate and run Sonar analysis; aggregate the job results into a required check |
 | [Release](.github/workflows/release.yml) | Pull request merged into `main` | Calculate a stable version, validate and run Sonar analysis, then tag the merged commit when validation succeeds and the quality gate passes |
-| [Publish](.github/workflows/publish.yml) | Push of a tag matching `*.*.*` | Call the reusable NuGet publishing workflow |
-| [Publish NuGet](https://github.com/DEFRA/lis-github-actions/blob/0.9.0/.github/workflows/publish-nuget.yml) | Called by another workflow | Download the versioned `nuget-packages-<version>` artifact and push packages to NuGet.org using trusted publishing in the `release` environment; requires `NUGET_USERNAME` |
+| [Publish](.github/workflows/publish.yml) | Push of a tag matching `*.*.*` | Run the central composite NuGet publishing action in a local job |
+| [Publish NuGet action](https://github.com/DEFRA/lis-github-actions/blob/1a03c6a3bf26b0aae6a08210d77c2970bd7f4298/.github/actions/publish-nuget/action.yml) | Called as a step in the local publish job | Download the versioned `nuget-packages-<version>` artifact and push packages to NuGet.org using trusted publishing in the `release` environment; requires `NUGET_USERNAME` |
+
+NuGet's trusted publishing policy must use repository owner `DEFRA`, repository `lis-sdk-nuget-core`, workflow filename `publish.yml`, and environment `release`. The `NUGET_USERNAME` secret identifies the policy creator. The publishing job stays in this repository because NuGet rejects authentication inside a reusable workflow hosted in another repository.
 
 Publishing requires an artifact built from the tagged commit by a successful prerelease or release workflow. The artifact records its commit, version, workflow run and attempt; publishing waits for that attempt to finish successfully before authenticating with NuGet. Artifacts created before this provenance record was added must be rebuilt before publishing.
 
