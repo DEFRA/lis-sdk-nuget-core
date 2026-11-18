@@ -16,36 +16,55 @@ permissions:
 jobs:
   get-version:
     name: 'Calculate Version'
-    uses: DEFRA/lis-github-actions/.github/workflows/version.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      ref: ${{ github.sha }}
-      branch: ${{ github.ref_name }}
-      release-type: prerelease
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Calculate version
+        id: version
+        uses: DEFRA/lis-github-actions/actions/version@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          ref: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          release-type: prerelease
 
   build-test-pack:
     name: 'Build test and pack'
     needs: get-version
-    uses: DEFRA/lis-github-actions/.github/workflows/build-test-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.sha }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build, test and pack
+        uses: DEFRA/lis-github-actions/actions/build-test-dotnet@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          version: ${{ needs.get-version.outputs.version }}
+          ref: ${{ github.sha }}
 
   sonar-analysis:
     name: 'Sonar Analysis'
     needs: get-version
-    uses: DEFRA/lis-github-actions/.github/workflows/sonar-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.sha }}
-      branch: ${{ github.ref_name }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    outputs:
+      quality-gate-status: ${{ steps.sonar.outputs.quality-gate-status }}
+    steps:
+      - name: Run Sonar analysis
+        id: sonar
+        uses: DEFRA/lis-github-actions/actions/sonar-dotnet@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          version: ${{ needs.get-version.outputs.version }}
+          ref: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          sonar-token: ${{ secrets.LIS_SONAR_TOKEN }}
 
   create-tag:
     name: 'Tag Validated Commit'
     needs: [get-version, build-test-pack, sonar-analysis]
     if: needs.sonar-analysis.outputs.quality-gate-status == 'PASSED'
-    uses: DEFRA/lis-github-actions/.github/workflows/tag.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.sha }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag
+        uses: DEFRA/lis-github-actions/actions/tag@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          version: ${{ needs.get-version.outputs.version }}
+          ref: ${{ github.sha }}
+          app-client-id: ${{ vars.LIS_RELEASE_APP_CLIENT_ID }}
+          app-private-key: ${{ secrets.LIS_RELEASE_APP_PRIVATE_KEY }}

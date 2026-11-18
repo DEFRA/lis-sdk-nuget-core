@@ -22,7 +22,7 @@ jobs:
     environment: release
     steps:
       - name: Publish NuGet packages
-        uses: DEFRA/lis-github-actions/.github/actions/publish-nuget@1a03c6a3bf26b0aae6a08210d77c2970bd7f4298 # unreleased; based on v0.9.0
+        uses: DEFRA/lis-github-actions/actions/publish-nuget@feature/LREG-900-convert-to-actions # temporary branch test
         with:
           version: ${{ github.ref_name }}
-          user: ${{ secrets.NUGET_USERNAME }}
+          nuget-username: ${{ secrets.NUGET_USERNAME }}

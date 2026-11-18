@@ -15,28 +15,43 @@ permissions:
 jobs:
   get-version:
     name: 'Calculate Version'
-    uses: DEFRA/lis-github-actions/.github/workflows/version.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      ref: ${{ github.event.pull_request.head.sha }}
-      branch: ${{ github.event.pull_request.head.ref }}
-      release-type: prerelease
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Calculate version
+        id: version
+        uses: DEFRA/lis-github-actions/actions/version@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          branch: ${{ github.event.pull_request.head.ref }}
+          release-type: prerelease
 
   build-test-pack:
     name: 'Build test and pack'
     needs: get-version
-    uses: DEFRA/lis-github-actions/.github/workflows/build-test-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.event.pull_request.head.sha }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build, test and pack
+        uses: DEFRA/lis-github-actions/actions/build-test-dotnet@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          version: ${{ needs.get-version.outputs.version }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
   sonar-analysis:
     name: 'Sonar Analysis'
     needs: get-version
-    uses: DEFRA/lis-github-actions/.github/workflows/sonar-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
-    with:
-      version: ${{ needs.get-version.outputs.version }}
-      ref: ${{ github.event.pull_request.head.sha }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    outputs:
+      quality-gate-status: ${{ steps.sonar.outputs.quality-gate-status }}
+    steps:
+      - name: Run Sonar analysis
+        id: sonar
+        uses: DEFRA/lis-github-actions/actions/sonar-dotnet@feature/LREG-900-convert-to-actions # temporary branch test
+        with:
+          version: ${{ needs.get-version.outputs.version }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          sonar-token: ${{ secrets.LIS_SONAR_TOKEN }}
 
   required-checks:
     name: 'Pull Request Validation'
