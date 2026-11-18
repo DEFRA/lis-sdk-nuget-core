@@ -15,7 +15,7 @@ permissions:
 jobs:
   get-version:
     name: 'Calculate Version'
-    uses: ./.github/workflows/version.yml
+    uses: DEFRA/lis-github-actions/.github/workflows/version.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
     with:
       ref: ${{ github.event.pull_request.head.sha }}
       branch: ${{ github.event.pull_request.head.ref }}
@@ -24,7 +24,7 @@ jobs:
   build-test-pack:
     name: 'Build test and pack'
     needs: get-version
-    uses: ./.github/workflows/build-test-dotnet.yml
+    uses: DEFRA/lis-github-actions/.github/workflows/build-test-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
     with:
       version: ${{ needs.get-version.outputs.version }}
       ref: ${{ github.event.pull_request.head.sha }}
@@ -32,7 +32,7 @@ jobs:
   sonar-analysis:
     name: 'Sonar Analysis'
     needs: get-version
-    uses: ./.github/workflows/sonar-dotnet.yml
+    uses: DEFRA/lis-github-actions/.github/workflows/sonar-dotnet.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
     with:
       version: ${{ needs.get-version.outputs.version }}
       ref: ${{ github.event.pull_request.head.sha }}

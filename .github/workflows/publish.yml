@@ -17,7 +17,7 @@ permissions:
 jobs:
   publish:
     name: 'Publish'
-    uses: ./.github/workflows/publish-nuget.yml
+    uses: DEFRA/lis-github-actions/.github/workflows/publish-nuget.yml@89f3dfe9923b231b4df965d54a8c95e83c56ec30 # v0.9.0
     with:
       version: ${{ github.ref_name }}
     secrets: inherit
