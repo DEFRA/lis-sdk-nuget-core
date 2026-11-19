@@ -1,20 +1,20 @@
 <Project>
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
-    <PropertyGroup>
-        <IsPackable>False</IsPackable>
-        <IsTestProject>true</IsTestProject>
-        <OutputType>Exe</OutputType>
-        <NoWarn>$(NoWarn);NU1608</NoWarn>
-    </PropertyGroup>
+  <PropertyGroup>
+    <IsPackable>False</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OutputType>Exe</OutputType>
+    <NoWarn>$(NoWarn);NU1608</NoWarn>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Using Include="Xunit" />
-        <Using Include="Shouldly" />
-    </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Shouldly" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Shouldly" />
-        <PackageReference Include="xunit.v3" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
 </Project>

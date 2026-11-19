@@ -1,7 +1,5 @@
 #nullable enable
 Defra.Livestock.Sdk.Core.Constants
-Defra.Livestock.Sdk.Core.Exceptions.BusinessRuleException
-Defra.Livestock.Sdk.Core.Exceptions.BusinessRuleException.BusinessRuleException(string! message) -> void
 Defra.Livestock.Sdk.Core.Exceptions.ConflictException
 Defra.Livestock.Sdk.Core.Exceptions.ConflictException.ConflictException(string! message) -> void
 Defra.Livestock.Sdk.Core.Exceptions.NotFoundException
