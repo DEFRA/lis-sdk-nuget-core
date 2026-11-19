@@ -13,7 +13,7 @@ Used by: LIS .NET services such as [lis-api-cattle](https://github.com/DEFRA/lis
 dotnet add package Defra.Livestock.Sdk.Core
 ```
 
-The current project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](.github/workflows/publish.yml) and [composite NuGet action](https://github.com/DEFRA/lis-github-actions/blob/feature/LREG-900-convert-to-actions/actions/publish-nuget/action.yml).
+The project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/publish.yml) and [composite NuGet action](https://github.com/DEFRA/lis-github-actions/blob/90a6d6da2ab2d9caaf7ac11ef878017b51c09fd2/actions/publish-nuget/action.yml).
 
 ## Usage
 
@@ -26,7 +26,6 @@ Each exception takes a single message. Throw them from service code so that the 
 | Type | Use when | Sealed |
 |---|---|---|
 | `NotFoundException` | A requested record does not exist | No |
-| `BusinessRuleException` | A business rule is broken | Yes |
 | `ConflictException` | The request conflicts with the current state | Yes |
 | `ProxyException` | A proxy error occurs | No |
 
@@ -36,11 +35,6 @@ using Defra.Livestock.Sdk.Core.Exceptions;
 if (holding is null)
 {
     throw new NotFoundException($"Holding {cph} was not found");
-}
-
-if (animal.IsDead)
-{
-    throw new BusinessRuleException("A dead animal cannot be moved");
 }
 
 if (await repository.ExistsAsync(tag))
@@ -97,7 +91,7 @@ using Defra.Livestock.Sdk.Core.Extensions;
 
 ### Display hashes (`Defra.Livestock.Sdk.Core.Extensions.GuidExtensions` and `Defra.Livestock.Sdk.Core.Extensions.StringExtensions`)
 
-`CreateDisplayHash(int length = 9, int charactersPerGroup = 3, bool crockfordReplacement = true)` produces a deterministic, upper-case display identifier from a GUID. The string overload parses a GUID first, so casing and GUID formatting do not change the result. Invalid GUID strings, including `null` and empty strings, throw `InvalidCastException` with the message `Invalid GUID`.
+`CreateDisplayHash(int length = 9, int charactersPerGroup = 3)` produces a deterministic, upper-case display identifier from a GUID. The string overload parses a GUID first, so casing and GUID formatting do not change the result. A `null` string throws `ArgumentNullException`; any other invalid GUID string, including an empty string, throws `FormatException` with the message `Invalid GUID`.
 
 ```csharp
 using System;
@@ -110,13 +104,13 @@ id.CreateDisplayHash(9, 9);              // "WD7QPPC39"
 id.ToString().CreateDisplayHash();       // "WD7-QPP-C39"
 ```
 
-`length` counts hash characters, excluding hyphen separators. Use a positive group size and lengths from 0 to 12; zero length produces an empty string. The implementation reads 64 bits from a SHA-256 digest and encodes five bits per character using the Crockford Base32 alphabet. The replacement option defaults to `true`; the alphabet already excludes `O`, `I` and `L`, so disabling it currently produces the same output.
+`length` counts hash characters, excluding hyphen separators. `length` must be from 0 to 12 and `charactersPerGroup` must be positive; other values throw `ArgumentOutOfRangeException`. A length of zero produces an empty string. The implementation reads 64 bits from a SHA-256 digest and encodes five bits per character using the Crockford Base32 alphabet. The alphabet excludes `I`, `L`, `O` and `U`, so hashes never contain characters that are easily confused.
 
 Display hashes can collide. Use the original GUID for identity and uniqueness checks.
 
 ## Prerequisites
 
-- .NET 10 SDK with C# 14 support (the project targets `net10.0` and uses extension blocks). SDK selection and the Microsoft Testing Platform runner are configured in [global.json](global.json).
+- .NET 10 SDK with C# 14 support (the project targets `net10.0` and uses extension blocks). SDK selection and the Microsoft Testing Platform runner are configured in [global.json](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/global.json).
 - To try a change in a consuming service: a local clone of [lis-dev](https://github.com/DEFRA/lis-dev), which runs a local NuGet server
 
 ## Setup
@@ -149,26 +143,25 @@ Run the xUnit test executable directly after building:
 
 ```bash
 dotnet build tests/Core.Tests/Core.Tests.csproj
-dotnet tests/Core.Tests/bin/Debug/net10.0/DefraDigital.Lis.Core.Tests.dll
+dotnet tests/Core.Tests/bin/Debug/net10.0/Defra.Livestock.Sdk.Core.Tests.dll
 ```
 
 ## Pipelines
 
-GitHub Actions use the composite actions under `actions/` in `DEFRA/lis-github-actions`. All callers temporarily follow `feature/LREG-900-convert-to-actions` for testing; pin them to released commit SHAs after testing. The repository no longer uses Cake scripts or a local GitVersion configuration.
+GitHub Actions use the composite actions under `actions/` in `DEFRA/lis-github-actions`. Every workflow pins these actions to the `v0.10.0` release commit (`90a6d6da2ab2d9caaf7ac11ef878017b51c09fd2`). Update all `uses:` references together when moving to a newer release.
 
 | Workflow | Trigger | Configured behaviour |
 |---|---|---|
-| [Prerelease](.github/workflows/prerelease.yml) | Push to `feature/**` or `hotfix/**` | Calculate a prerelease version, validate and run Sonar analysis, then tag the commit when validation succeeds and the quality gate passes |
-| [Pull Request Validation](.github/workflows/pull-request.yml) | Pull request opened, updated or reopened against `main` | Calculate a prospective version, validate and run Sonar analysis; aggregate the job results into a required check |
-| [Release](.github/workflows/release.yml) | Pull request merged into `main` | Calculate a stable version, validate and run Sonar analysis, then tag the merged commit when validation succeeds and the quality gate passes |
-| [Publish](.github/workflows/publish.yml) | Push of a tag matching `*.*.*` | Run the central composite NuGet publishing action in a local job |
-| [Publish NuGet action](https://github.com/DEFRA/lis-github-actions/blob/feature/LREG-900-convert-to-actions/actions/publish-nuget/action.yml) | Called as a step in the local publish job | Download the versioned `nuget-packages-<version>` artifact and push packages to NuGet.org using trusted publishing in the `release` environment; requires `NUGET_USERNAME` |
+| [Prerelease](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/prerelease.yml) | Push to `feature/**` or `hotfix/**` | Calculate a prerelease version, validate and run Sonar analysis, then tag the commit when validation succeeds and the quality gate passes |
+| [Pull Request Validation](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/pull-request.yml) | Pull request opened, updated or reopened against `main` | Calculate a prospective version, validate and run Sonar analysis; aggregate the job results into a required check |
+| [Release](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/release.yml) | Pull request merged into `main` | Calculate a stable version, validate and run Sonar analysis, then tag the merged commit when validation succeeds and the quality gate passes |
+| [Publish](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/publish.yml) | Push of a tag matching `*.*.*` | Run the central composite NuGet publishing action in a local job |
 
 NuGet's trusted publishing policy must use repository owner `DEFRA`, repository `lis-sdk-nuget-core`, workflow filename `publish.yml`, and environment `release`. The `NUGET_USERNAME` secret identifies the policy creator. The publishing job stays in this repository because NuGet rejects authentication inside a reusable workflow hosted in another repository.
 
-Publishing requires an artifact built from the tagged commit by a successful prerelease or release workflow. The artifact records its commit, version, workflow run and attempt; publishing waits for that attempt to finish successfully before authenticating with NuGet. Artifacts created before this provenance record was added must be rebuilt before publishing.
+Publishing requires an artifact built from the tagged commit by a successful prerelease or release workflow. The artifact records its commit, version, workflow run and attempt; publishing waits for that attempt to finish successfully before authenticating with NuGet.
 
-Dependabot branches receive patch versions. Their PR validation versions use the label `dependabot-alpha.<run>.<attempt>`; feature and hotfix prereleases continue to require an LREG ticket.
+Dependabot branches receive patch versions. Their PR validation versions use the label `dependabot-alpha.<run>.<attempt>`; feature and hotfix prereleases require an LREG ticket.
 
 ## Branching policy
 
@@ -206,6 +199,6 @@ It is designed to encourage use and re-use of information freely and flexibly, w
 
 The build runs the .NET 10 recommended analyzer rules, StyleCop and SonarAnalyzer. Tests also receive xUnit analyzers through `xunit.v3`. Analyzer warnings are treated as errors; CA1707 is disabled for test code to allow descriptive names with underscores.
 
-The library uses `Microsoft.CodeAnalysis.PublicApiAnalyzers` to track its public surface, including nullability and default parameter values. The current API is recorded in `src/Core/PublicAPI.Unshipped.txt`; `PublicAPI.Shipped.txt` starts empty because this baseline does not establish which APIs have already been released.
+The library uses `Microsoft.CodeAnalysis.PublicApiAnalyzers` to track its public surface, including nullability and default parameter values. Released APIs are recorded in `src/Core/PublicAPI.Shipped.txt` and unreleased APIs in `src/Core/PublicAPI.Unshipped.txt`.
 
 When intentionally changing the public API, review the analyzer diagnostic and update the unshipped baseline (the RS0016 code fix can add declarations). During release preparation, move released entries into the shipped baseline. Keep shipped declarations as the compatibility record; represent intentional removals using `*REMOVED*` entries in the unshipped file.

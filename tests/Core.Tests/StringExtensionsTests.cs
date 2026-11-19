@@ -30,7 +30,7 @@ public class StringExtensionsTests
     public void ToSnakeCase_ReturnsExpectedResult(string? input, string? expected)
     {
         // Act
-        var result = input!.ToSnakeCase();
+        var result = input.ToSnakeCase();
 
         // Assert
         result.ShouldBe(expected);
@@ -55,15 +55,24 @@ public class StringExtensionsTests
     /// <summary>
     /// Verifies hashing options are forwarded to the GUID extension.
     /// </summary>
-    /// <param name="crockfordReplacement">Whether to replace ambiguous characters.</param>
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void CreateDisplayHash_WithOptions_ReturnsExpectedHash(bool crockfordReplacement)
+    [Fact]
+    public void CreateDisplayHash_WithOptions_ReturnsExpectedHash()
     {
-        var result = "00112233-4455-6677-8899-aabbccddeeff".CreateDisplayHash(12, 4, crockfordReplacement);
+        var result = "00112233-4455-6677-8899-aabbccddeeff"
+            .CreateDisplayHash(12, 4);
 
         result.ShouldBe("WD7Q-PPC3-9MTT");
+    }
+
+    /// <summary>
+    /// Verifies a null string is rejected.
+    /// </summary>
+    [Fact]
+    public void CreateDisplayHash_WithNull_ThrowsArgumentNullException()
+    {
+        string? input = null;
+
+        Should.Throw<ArgumentNullException>(() => input.CreateDisplayHash());
     }
 
     /// <summary>
@@ -71,14 +80,13 @@ public class StringExtensionsTests
     /// </summary>
     /// <param name="input">The invalid GUID string.</param>
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("not-a-guid")]
     [InlineData("00112233-4455-6677-8899-aabbccddeefg")]
-    public void CreateDisplayHash_WithInvalidGuid_ThrowsInvalidCastException(string? input)
+    public void CreateDisplayHash_WithInvalidGuid_ThrowsFormatException(string input)
     {
-        var exception = Should.Throw<InvalidCastException>(() => input!.CreateDisplayHash());
+        var exception = Should.Throw<FormatException>(() => input.CreateDisplayHash());
 
         exception.Message.ShouldBe("Invalid GUID");
     }
