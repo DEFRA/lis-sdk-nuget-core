@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Lis.Core.Tests;
+namespace Defra.Livestock.Sdk.Core.Tests;
 
-using Defra.Lis.Core.Exceptions;
+using Defra.Livestock.Sdk.Core.Exceptions;
 
 /// <summary>
 /// Unit tests for <see cref="ConflictException"/>.

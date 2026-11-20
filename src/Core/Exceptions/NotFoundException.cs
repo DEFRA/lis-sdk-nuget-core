@@ -1,7 +1,7 @@
 // <copyright file="NotFoundException.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
-namespace Defra.Lis.Core.Exceptions;
+namespace Defra.Livestock.Sdk.Core.Exceptions;
 
 /// <summary>
 /// Exception thrown when a Not found error occurs.

@@ -1,8 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>DefraDigital.Lis.Core.Tests</AssemblyName>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core\Core.csproj" />
   </ItemGroup>
