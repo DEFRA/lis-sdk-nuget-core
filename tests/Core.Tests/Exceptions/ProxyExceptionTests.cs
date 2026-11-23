@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Livestock.Sdk.Core.Tests;
+namespace Defra.Livestock.Sdk.Core.Tests.Exceptions;
 
 using Defra.Livestock.Sdk.Core.Exceptions;
 

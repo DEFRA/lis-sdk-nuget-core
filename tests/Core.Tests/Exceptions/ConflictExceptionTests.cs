@@ -1,18 +1,18 @@
-// <copyright file="NotFoundExceptionTests.cs" company="Defra">
+// <copyright file="ConflictExceptionTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Livestock.Sdk.Core.Tests;
+namespace Defra.Livestock.Sdk.Core.Tests.Exceptions;
 
 using Defra.Livestock.Sdk.Core.Exceptions;
 
 /// <summary>
-/// Unit tests for <see cref="NotFoundException"/>.
+/// Unit tests for <see cref="ConflictException"/>.
 /// </summary>
-public class NotFoundExceptionTests
+public class ConflictExceptionTests
 {
     /// <summary>
-    /// Verifies that <see cref="NotFoundException"/> can be initialized with a message.
+    /// Verifies that <see cref="ConflictException"/> can be initialized with a message.
     /// </summary>
     [Fact]
     public void Constructor_WithMessage_SetsMessage()
@@ -21,7 +21,7 @@ public class NotFoundExceptionTests
         var message = "Test message";
 
         // Act
-        var exception = new NotFoundException(message);
+        var exception = new ConflictException(message);
 
         // Assert
         exception.Message.ShouldBe(message);
