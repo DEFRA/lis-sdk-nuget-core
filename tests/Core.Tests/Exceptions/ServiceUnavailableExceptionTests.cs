@@ -1,0 +1,29 @@
+// <copyright file="ServiceUnavailableExceptionTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Livestock.Sdk.Core.Tests.Exceptions;
+
+using Defra.Livestock.Sdk.Core.Exceptions;
+
+/// <summary>
+/// Unit tests for <see cref="ServiceUnavailableException"/>.
+/// </summary>
+public class ServiceUnavailableExceptionTests
+{
+    /// <summary>
+    /// Verifies that <see cref="ServiceUnavailableException"/> can be initialized with a message.
+    /// </summary>
+    [Fact]
+    public void Constructor_WithMessage_SetsMessage()
+    {
+        // Arrange
+        var message = "Test message";
+
+        // Act
+        var exception = new ServiceUnavailableException(message);
+
+        // Assert
+        exception.Message.ShouldBe(message);
+    }
+}
