@@ -18,12 +18,31 @@ public class ServiceUnavailableExceptionTests
     public void Constructor_WithMessage_SetsMessage()
     {
         // Arrange
-        var message = "Test message";
+        const string message = "Test message";
 
         // Act
         var exception = new ServiceUnavailableException(message);
 
         // Assert
         exception.Message.ShouldBe(message);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="ServiceUnavailableException"/> can be initialized with a message and inner exception.
+    /// </summary>
+    [Fact]
+    public void Constructor_WithMessageAndInnerException_SetsMessageAndInnerException()
+    {
+        // Arrange
+        const string message = "Test message";
+
+        var innerException = new InvalidOperationException("Inner exception message");
+
+        // Act
+        var exception = new ServiceUnavailableException(message, innerException);
+
+        // Assert
+        exception.Message.ShouldBe(message);
+        exception.InnerException.ShouldBe(innerException);
     }
 }

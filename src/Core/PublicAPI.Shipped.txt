@@ -8,6 +8,7 @@ Defra.Livestock.Sdk.Core.Exceptions.ProxyException
 Defra.Livestock.Sdk.Core.Exceptions.ProxyException.ProxyException(string! message) -> void
 Defra.Livestock.Sdk.Core.Exceptions.ServiceUnavailableException
 Defra.Livestock.Sdk.Core.Exceptions.ServiceUnavailableException.ServiceUnavailableException(string! message) -> void
+Defra.Livestock.Sdk.Core.Exceptions.ServiceUnavailableException.ServiceUnavailableException(string! message, System.Exception! innerException) -> void
 Defra.Livestock.Sdk.Core.Extensions.GuidExtensions
 Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.extension(System.Guid)
 Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.extension(System.Guid).CreateDisplayHash(int length = 9, int charactersPerGroup = 3) -> string!
