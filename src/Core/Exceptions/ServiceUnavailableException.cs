@@ -17,4 +17,14 @@ public class ServiceUnavailableException : Exception
         : base(message)
     {
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceUnavailableException"/> class.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public ServiceUnavailableException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 }
