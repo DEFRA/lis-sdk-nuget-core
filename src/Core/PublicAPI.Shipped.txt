@@ -19,6 +19,7 @@ Defra.Livestock.Sdk.Core.Extensions.StringExtensions.extension(string?).ToSnakeC
 Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames
 const Defra.Livestock.Sdk.Core.Constants.ProxyName = "CDP_HTTPS_PROXY" -> string!
 const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.ApiKey = "x-api-key" -> string!
+const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.CdpRequestId = "x-cdp-request-id" -> string!
 const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.CorrelationId = "x-correlation-id" -> string!
 const Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames.OperatorId = "x-operator-id" -> string!
 static Defra.Livestock.Sdk.Core.Extensions.GuidExtensions.CreateDisplayHash(this System.Guid source, int length = 9, int charactersPerGroup = 3) -> string!
