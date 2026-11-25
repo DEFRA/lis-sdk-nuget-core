@@ -23,4 +23,9 @@ public static class RequestHeaderNames
     /// Api key header name.
     /// </summary>
     public const string ApiKey = "x-api-key";
+
+    /// <summary>
+    /// CDP request ID header name.
+    /// </summary>
+    public const string CdpRequestId = "x-cdp-request-id";
 }
