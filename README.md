@@ -13,7 +13,7 @@ Used by: LIS .NET services such as [lis-api-cattle](https://github.com/DEFRA/lis
 dotnet add package Defra.Livestock.Sdk.Core
 ```
 
-The project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/publish.yml) and [composite NuGet action](https://github.com/DEFRA/lis-github-actions/blob/90a6d6da2ab2d9caaf7ac11ef878017b51c09fd2/actions/publish-nuget/action.yml).
+The project produces the `Defra.Livestock.Sdk.Core` package and targets `net10.0`. Publishing is configured in the [tag-triggered workflow](https://github.com/DEFRA/lis-sdk-nuget-core/blob/main/.github/workflows/publish.yml) and [composite NuGet action](https://github.com/DEFRA/lis-github-actions/blob/5f5557f64c1344efb6ed44e482452f9cfe6bea51/actions/publish-nuget/action.yml).
 
 ## Usage
 
@@ -21,13 +21,14 @@ The package has no configuration and needs no dependency injection registration.
 
 ### Exceptions (`Defra.Livestock.Sdk.Core.Exceptions`)
 
-Each exception takes a single message. Throw them from service code so that the calling service can map them to HTTP responses.
+Each exception takes a message; `ServiceUnavailableException` can also take an inner exception. Throw them from service code so that the calling service can map them to HTTP responses.
 
 | Type | Use when | Sealed |
 |---|---|---|
 | `NotFoundException` | A requested record does not exist | No |
 | `ConflictException` | The request conflicts with the current state | Yes |
 | `ProxyException` | A proxy error occurs | No |
+| `ServiceUnavailableException` | A downstream service is unavailable | No |
 
 ```csharp
 using Defra.Livestock.Sdk.Core.Exceptions;
@@ -45,6 +46,17 @@ if (await repository.ExistsAsync(tag))
 throw new ProxyException("The CDP proxy could not be configured");
 ```
 
+```csharp
+try
+{
+    response = await httpClient.GetAsync(uri);
+}
+catch (HttpRequestException ex)
+{
+    throw new ServiceUnavailableException("The cattle API is unavailable", ex);
+}
+```
+
 ### Request header names (`Defra.Livestock.Sdk.Core.Middleware.Headers.RequestHeaderNames`)
 
 String constants for the headers LIS services pass between each other.
@@ -54,6 +66,7 @@ String constants for the headers LIS services pass between each other.
 | `CorrelationId` | `x-correlation-id` |
 | `OperatorId` | `x-operator-id` |
 | `ApiKey` | `x-api-key` |
+| `CdpRequestId` | `x-cdp-request-id` |
 
 ```csharp
 using Defra.Livestock.Sdk.Core.Middleware.Headers;
@@ -148,7 +161,7 @@ dotnet tests/Core.Tests/bin/Debug/net10.0/Defra.Livestock.Sdk.Core.Tests.dll
 
 ## Pipelines
 
-GitHub Actions use the composite actions under `actions/` in `DEFRA/lis-github-actions`. Every workflow pins these actions to the `v0.10.0` release commit (`90a6d6da2ab2d9caaf7ac11ef878017b51c09fd2`). Update all `uses:` references together when moving to a newer release.
+GitHub Actions use the composite actions under `actions/` in `DEFRA/lis-github-actions`. Every workflow pins these actions to the `v0.11.0` release commit (`5f5557f64c1344efb6ed44e482452f9cfe6bea51`). Update all `uses:` references together when moving to a newer release.
 
 | Workflow | Trigger | Configured behaviour |
 |---|---|---|
